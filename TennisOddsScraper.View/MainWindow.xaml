@@ -6,30 +6,49 @@
         xmlns:local="clr-namespace:TennisOddsScraper.View"
         xmlns:col="clr-namespace:System.Collections;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="TennisScrapper" Height="350" Width="533"
+        Title="TennisScrapper" Height="285" Width="645"
         Loaded="Window_Loaded">
-    
-    <Grid Margin="0,0,-142,0">
+
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Label Target="{Binding ElementName=ComboBox}" Grid.Row="0" HorizontalContentAlignment="Center" Margin="17,19,399,275" >Choose the type</Label>
-        <ComboBox Name="ComboBox" StaysOpenOnEdit="True" IsEditable="True" SelectionChanged="ComboBox_Selected" Grid.Row="0" Height="25" Width="354" VerticalAlignment="Top" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="130,24,0,0">
-            <TextBlock>Home/Away</TextBlock>
-            <TextBlock>Asian Handicap</TextBlock>
-            <TextBlock>Over/Under</TextBlock>
-        </ComboBox>
+        <StackPanel Orientation="Horizontal">
+            <Label Target="{Binding ElementName=ComboBox}" Grid.Row="0" Margin="20,10,30,10" >Choose the type</Label>
+            <ComboBox Name="ComboBox" StaysOpenOnEdit="True" IsEditable="True" SelectionChanged="ComboBox_Selected"  Width="347" Height="20" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
+                <TextBlock>Home/Away</TextBlock>
+                <TextBlock>Asian Handicap</TextBlock>
+                <TextBlock>Over/Under</TextBlock>
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"  Grid.Row="1" Margin="0,10,0,10">
+            <Button Width="130" Margin=" 25, 0, 40, 0">Get new information</Button>
+            <Button Width="130" Margin=" 0, 0, 40, 0">Get from Data Base</Button>
+            <Button Width="130">Create XML</Button>
+        </StackPanel>
 
-        <Button Margin="17,66,372,213" Grid.Row="0">Get new information</Button>
-        <Button Margin="190,66,207,213" Grid.Row="0">Get from Data Base</Button>
-        <Button Margin="357,66,40,213" Grid.Row="0" RenderTransformOrigin="1.46,-1.475">Create XML</Button>
+        <ProgressBar Margin="0, 10, 0, 10" Height="20" Grid.Row="2" ></ProgressBar>
 
-        <DataGrid Grid.Row="1" x:Name="phonesGrid" AutoGenerateColumns="True" ItemsSource="{DynamicResource ResourceKey=OUItemModel}">
+        <DataGrid ColumnWidth="Auto" Grid.Row="4" x:Name="phonesGrid" AutoGenerateColumns="False" ItemsSource="{DynamicResource ResourceKey=OUItemModel}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Header="Country" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Header="Cup" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Header="Match" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Header="Av1" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Header="Av2" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Header="AvPayout" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Header="H1" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Header="H2" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Header="HPayout" Width="*" ></DataGridTextColumn>
+            </DataGrid.Columns>
             <DataGrid.Resources>
                 <col:ArrayList x:Key="OUItemModel">
-                    <local:OUItemModel Country="UK" Cup="Cup" Mutch="Mutch" Handicap="Handicap25" Av1="0.23" Av2="1.23" AvPayout="25" />
+                    <local:OUItemModel Country="Country" Cup="Cup" Mutch="Mutch" Handicap="Handicap25" Av1="0.23" Av2="1.23" AvPayout="25" />
                 </col:ArrayList>
             </DataGrid.Resources>
         </DataGrid>
