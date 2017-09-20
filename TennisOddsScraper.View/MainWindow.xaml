@@ -4,9 +4,35 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TennisOddsScraper.View"
+        xmlns:col="clr-namespace:System.Collections;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
+        Title="TennisScrapper" Height="350" Width="533"
+        Loaded="Window_Loaded">
+    
+    <Grid Margin="0,0,-142,0">
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Label Target="{Binding ElementName=ComboBox}" Grid.Row="0" HorizontalContentAlignment="Center" Margin="17,19,399,275" >Choose the type</Label>
+        <ComboBox Name="ComboBox" StaysOpenOnEdit="True" IsEditable="True" SelectionChanged="ComboBox_Selected" Grid.Row="0" Height="25" Width="354" VerticalAlignment="Top" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="130,24,0,0">
+            <TextBlock>Home/Away</TextBlock>
+            <TextBlock>Asian Handicap</TextBlock>
+            <TextBlock>Over/Under</TextBlock>
+        </ComboBox>
+
+        <Button Margin="17,66,372,213" Grid.Row="0">Get new information</Button>
+        <Button Margin="190,66,207,213" Grid.Row="0">Get from Data Base</Button>
+        <Button Margin="357,66,40,213" Grid.Row="0" RenderTransformOrigin="1.46,-1.475">Create XML</Button>
+
+        <DataGrid Grid.Row="1" x:Name="phonesGrid" AutoGenerateColumns="True" ItemsSource="{DynamicResource ResourceKey=OUItemModel}">
+            <DataGrid.Resources>
+                <col:ArrayList x:Key="OUItemModel">
+                    <local:OUItemModel Country="UK" Cup="Cup" Mutch="Mutch" Handicap="Handicap25" Av1="0.23" Av2="1.23" AvPayout="25" />
+                </col:ArrayList>
+            </DataGrid.Resources>
+        </DataGrid>
+
     </Grid>
 </Window>
