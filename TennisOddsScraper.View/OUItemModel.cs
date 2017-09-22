@@ -25,5 +25,11 @@ namespace TennisOddsScraper.View
         public float Av2 { get; set; }
 
         public float AvPayout { get; set; }
+
+        public float H1 { get; set; }
+
+        public float H2 { get; set; }
+
+        public float HPayout { get; set; }
     }
 }
