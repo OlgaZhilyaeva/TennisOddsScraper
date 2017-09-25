@@ -62,28 +62,28 @@ namespace TestSElenium
 
                         driver.FindElement(By.CssSelector("#tab-nav-main ul > li a[title='Asian Handicap']")).Click();//переход на АН
                         
-                        IList<IWebElement> selectBigger = driver.FindElements(By.CssSelector(".table-container .odds-cnt"));
-                        int [] mas = new int[selectBigger.Count];
+                        //IList<IWebElement> selectBigger = driver.FindElements(By.CssSelector(".table-container"));
+                        IList<IWebElement> links = driver.FindElements(By.CssSelector(".table-container .odds-co a"));
+                        IList<IWebElement> odds = driver.FindElements(By.CssSelector(".table-container .odds-cnt"));
 
-                        for (int s = 0; s < selectBigger.Count; s++)//поиск среди всех вариантов
+                        List<LineObj> LineArray = new List<LineObj>();
+                        double[] mas = new double[odds.Count];
+
+                        for (int d = 0; d < odds.Count; d++)
                         {
-                            string a = selectBigger[s].Text.Replace("(", "");
-                            a = a.Replace(")", "");
-                            if (a!="")
-                            {
-                                mas[s] = Convert.ToInt32(a);
-                            }
-                        }
+                                string a = odds[d].Text.Replace("(", "").Replace(")", "");
+                                if (a != "")
+                                {
+                                    mas[d] = Convert.ToInt32(a);
+                                }
 
-
-                        int max = 0;
-                        for (int m = 0; m < mas.Length; m++)
-                        {
-                            if (mas[m]>max)
-                            {
-                                max = mas[m];//находит максимальный элемент
-                            }
+                            LineArray.Add(new LineObj() {
+                                CompareOdds = links[d].Text,
+                                Value = mas[d]
+                               });
                         }
+                        
+                        
 
 
 
