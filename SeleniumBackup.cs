@@ -40,13 +40,13 @@ namespace TestSElenium
             AddHref(URL1, selectElements);//get hrefs
             IList<HAItem> XMLObjects = new List<HAItem>();
 
-            AddNames(NamesCountries, selectElements);
+            AddNames(NamesCountries, selectElements);//get Names
 
             for (int i = 1; i < URL1.Count; i++)
             {
                 HAItem item = new HAItem();
 
-                string country = NamesCountries[i];///////////////////////////
+                string country = NamesCountries[i];
                 item.Country = selectElements[i].Text;
 
                 driver.Navigate().GoToUrl(URL1[i]);
@@ -58,9 +58,9 @@ namespace TestSElenium
                 for (int j = 0; j < URL2.Count; j++)
                 {
                     string cup = URL2[j];
-                    if (cup!="")
+                    if (cup != "")
                     {
-                        item.Cup = NamesCups[j];//////////////////////////////
+                        item.Cup = NamesCups[j];
 
                         driver.Navigate().GoToUrl(URL2[j]);
                         Delay();
@@ -68,26 +68,25 @@ namespace TestSElenium
                         AddHref(URL3, selectURLs2);//get hrefs
                         AddNames(NamesMatches, selectURLs2);
 
-                        for (int z = 0; z < selectURLs2.Count; z++)
+                        for (int z = 0; z < URL3.Count; z++)
                         {
                             string match = URL3[z];
-                            item.Match = NamesMatches[z];///////////////////////////////
-                            driver.Navigate().GoToUrl(URL3[z]);// дошел до корня со значениями Home/away!!!!!!!!!!!!!!!!!!
+                            item.Match = NamesMatches[z];
+                            driver.Navigate().GoToUrl(URL3[z]);// Goto Home/away
                             Delay();
                             GetValues(item, 1);
 
-                            driver.FindElement(By.CssSelector("#tab-nav-main ul > li a[title='Asian Handicap']")).Click();//переход на АН
+                            driver.FindElement(By.CssSelector("#tab-nav-main ul > li a[title='Asian Handicap']")).Click();//goto АН
                             Delay();
                             FindMax(item, 2);
 
-                            driver.FindElement(By.CssSelector("#tab-nav-main ul > li a[title='Over/Under']")).Click();//переход на O/U
+                            driver.FindElement(By.CssSelector("#tab-nav-main ul > li a[title='Over/Under']")).Click();//goto O/U
                             Delay();
                             FindMax(item, 3);
 
                             XMLObjects.Add(item);
 
                         }
-
                     }
                 }
             }
@@ -102,9 +101,19 @@ namespace TestSElenium
 
         public void FindMax(HAItem itemX, int val)
         {
-            IList<IWebElement> links = driver.FindElements(By.CssSelector(".table-container .odds-co a"));
-            IList<IWebElement> odds = driver.FindElements(By.CssSelector(".table-container .odds-cnt"));
+            //get containers with display != none
+            IList<IWebElement> containers = driver.FindElements(By.CssSelector(".table-container"))
+                .Where(x => x.GetCssValue("display").Equals("none") == false).ToList();
+            Delay();
+            List<IWebElement> links = new List<IWebElement>();
+            List<IWebElement> odds = new List<IWebElement>();
 
+            foreach (var item in containers)
+            {
+                links.AddRange(item.FindElements(By.CssSelector(".odds-co a")));
+                odds.AddRange(item.FindElements(By.CssSelector(".odds-cnt")));
+            }
+            // get numbers of odds
             List<LineObj> LineArray = new List<LineObj>();
             double[] mas = new double[odds.Count];
             Delay();
@@ -122,11 +131,31 @@ namespace TestSElenium
                     Value = mas[d]
                 });
             }
+            //if there are more the one max value
+            List<LineObj> max = LineArray.OrderByDescending(x => x.Value).ToList();//начало правок когда несколько одинаковых в скобках
+            double firstEl = max.First().Value;
+            max = max.Where(x => x.Value == firstEl).ToList();
+            LineObj FinalMax = new LineObj();
 
-            LineObj max = LineArray.OrderByDescending(x => x.Value).FirstOrDefault();
-            if (max != null)
+            if (max.Count > 1)
             {
-                max.CompareOdds.Click();
+                for (int i = 0; i < max.Count; i++)
+                {
+                    max[i].CompareOdds.Click();
+                    string hPayout = driver.FindElement(By.CssSelector(".table-main .highest .center")).Text;
+                    Delay();
+                    hPayout = hPayout.Replace("%", "");
+                    double hPay = Convert.ToDouble(hPayout);
+                    max[i].hPayout = hPay;
+                    max[i].CompareOdds.Click();
+                }
+                max = max.OrderByDescending(x => x.hPayout).ToList();
+            }
+            FinalMax = max.First();
+            //get max value and goto function which finds values
+            if (FinalMax != null)
+            {
+                FinalMax.CompareOdds.Click();
                 Delay();
                 GetValues(itemX, val);
             }
@@ -144,22 +173,30 @@ namespace TestSElenium
         {
             for (int i = 0; i < B.Count; i++)
             {
-                A.Add(B[i].GetAttribute("href"));
+                if (B[i].Text != " ")
+                {
+                    A.Add(B[i].GetAttribute("href"));
+                }
             }
         }
 
         public void GetValues(HAItem item, int val)
         {
-            
-            string averPayout = driver.FindElement(By.CssSelector(".table-main .aver .center")).Text;
-            string hPayout = driver.FindElement(By.CssSelector(".table-main .highest .center")).Text;
 
+            string averPayout = driver.FindElement(By.CssSelector(".table-main .aver .center")).Text;
+            Delay();
+            string hPayout = driver.FindElement(By.CssSelector(".table-main .highest .center")).Text;
+            Delay();
             if (val == 1)
             {
                 string aver1 = driver.FindElement(By.CssSelector(".table-main .aver .right:nth-child(2)")).Text;
+                Delay();
                 string aver2 = driver.FindElement(By.CssSelector(".table-main .aver .right:nth-child(3)")).Text;
+                Delay();
                 string h1 = driver.FindElement(By.CssSelector(".table-main .highest .right:nth-child(2)")).Text;
+                Delay();
                 string h2 = driver.FindElement(By.CssSelector(".table-main .highest .right:nth-child(3)")).Text;
+                Delay();
 
                 item.Av1 = Convert.ToDouble(aver1);
                 item.Av2 = Convert.ToDouble(aver2);
@@ -203,7 +240,7 @@ namespace TestSElenium
 
         public void Delay()
         {
-            Thread.Sleep(100);
+            Thread.Sleep(400);
         }
 
     }
