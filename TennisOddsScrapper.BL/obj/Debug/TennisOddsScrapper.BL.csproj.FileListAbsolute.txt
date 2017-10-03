@@ -1,0 +1,8 @@
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\bin\Debug\TennisOddsScrapper.BL.dll
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\bin\Debug\TennisOddsScrapper.BL.pdb
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\bin\Debug\WebDriver.dll
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\bin\Debug\WebDriver.xml
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\obj\Debug\TennisOddsScrapper.BL.csproj.CoreCompileInputs.cache
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\obj\Debug\TennisOddsScrapper.BL.dll
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\obj\Debug\TennisOddsScrapper.BL.pdb
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\obj\Debug\TennisOddsScrapper.BL.csprojResolveAssemblyReference.cache
