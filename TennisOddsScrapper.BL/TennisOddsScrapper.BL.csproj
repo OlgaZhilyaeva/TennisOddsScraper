@@ -51,6 +51,7 @@
     <Compile Include="Models\Counter.cs" />
     <Compile Include="Models\CountryLink.cs" />
     <Compile Include="Models\DuelLink.cs" />
+    <Compile Include="Models\FindHigh.cs" />
     <Compile Include="Models\MatchLink.cs" />
     <Compile Include="Models\OddValue.cs" />
     <Compile Include="OddsScrapper.cs" />
