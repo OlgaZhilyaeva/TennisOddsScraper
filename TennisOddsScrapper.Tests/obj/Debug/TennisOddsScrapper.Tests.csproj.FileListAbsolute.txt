@@ -15,3 +15,6 @@ C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.Tests\obj\D
 C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.Tests\obj\Debug\TennisOddsScrapper.Tests.csproj.CoreCompileInputs.cache
 C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.Tests\obj\Debug\TennisOddsScrapper.Tests.dll
 C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.Tests\obj\Debug\TennisOddsScrapper.Tests.pdb
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.Tests\bin\Debug\TennisOddsScrapper.BL.dll.config
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.Tests\bin\Debug\EntityFramework.xml
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.Tests\bin\Debug\TennisOddsScrapper.Tests.dll.config

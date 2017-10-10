@@ -6,3 +6,8 @@ C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\obj\Debu
 C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\obj\Debug\TennisOddsScrapper.BL.dll
 C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\obj\Debug\TennisOddsScrapper.BL.pdb
 C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\obj\Debug\TennisOddsScrapper.BL.csprojResolveAssemblyReference.cache
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\bin\Debug\TennisOddsScrapper.BL.dll.config
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\bin\Debug\EntityFramework.dll
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\bin\Debug\EntityFramework.xml
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScrapper.BL\bin\Debug\EntityFramework.SqlServer.xml

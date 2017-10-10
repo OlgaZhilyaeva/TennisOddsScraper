@@ -16,3 +16,13 @@ C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScraper.View\obj\Deb
 C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScraper.View\bin\Debug\WebDriver.dll
 C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScraper.View\bin\Debug\WebDriver.xml
 C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScraper.View\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScraper.View\bin\Debug\EntityFramework.dll
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScraper.View\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScraper.View\bin\Debug\EntityFramework.xml
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScraper.View\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScraper.View\bin\Debug\EntityFramework.SqlServerCompact.dll
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScraper.View\bin\Debug\System.Data.SqlServerCe.dll
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScraper.View\bin\Debug\TennisOddsScrapper.BL.dll
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScraper.View\bin\Debug\TennisOddsScrapper.BL.pdb
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScraper.View\bin\Debug\TennisOddsScrapper.BL.dll.config
+C:\Users\zhily\Documents\GitHub\TennisOddsScraper\TennisOddsScraper.View\bin\Debug\EntityFramework.SqlServerCompact.xml

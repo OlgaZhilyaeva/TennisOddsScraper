@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TennisOddsScrapper.BL;
+using TennisOddsScrapper.BL.Models;
 
 namespace TennisOddsScraper.View
 {
@@ -53,5 +55,44 @@ namespace TennisOddsScraper.View
         //}
 
 
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+
+            //DuelLink duelLink = new DuelLink() { MatchLink = null, Url = "dfdf", DuelLinkId = 6, Name = "Name" };
+            //OddsDbContext db = new OddsDbContext();
+            //foreach (var dbDuelLink in db.DuelLinks)
+            //{
+            //    System.Windows.MessageBox.Show("Test" + dbDuelLink.Name);
+
+            //}
+            //db.DuelLinks.Add(duelLink);
+            //db.SaveChanges();
+
+            //foreach (var dbDuelLink in db.DuelLinks)
+            //{
+            //    System.Windows.MessageBox.Show("Test"+ dbDuelLink.Name);
+                
+            //}
+
+            OddsScrapper scrapper = new OddsScrapper();
+
+            scrapper.LogIn();
+            scrapper.StartScraping();
+            
+
+
+
+        }
+
+        private void ButtonBase_OnClick1(object sender, RoutedEventArgs e)
+        {
+            OddsDbContext db = new OddsDbContext();
+
+            foreach (var dbDuelLink in db.DuelLinks)
+            {
+                System.Windows.MessageBox.Show(dbDuelLink.Name);
+
+            }
+        }
     }
 }
