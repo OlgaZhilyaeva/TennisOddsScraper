@@ -17,7 +17,6 @@ namespace TennisOddsScrapper.BL.Models
         public string Highest2 { get; set; }
         public string HighestPayout { get; set; }
 
-        public string GameValue { get; set; }
         public string Date { get; set; }
 
         public DuelLink DuelLink { get; set; }

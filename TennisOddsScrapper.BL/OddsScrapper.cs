@@ -49,7 +49,7 @@ namespace TennisOddsScrapper.BL
 
             foreach (var countryLink in countriesLinks)
             {
-                if (countryLink.Name == "China" || countryLink.Name == "Austria" || countryLink.Name == "Germany" || countryLink.Name == "Hong Kong" || countryLink.Name == "Italy" || countryLink.Name == "Spain" || countryLink.Name == "USA" || countryLink.Name == "Uzbekistan" || countryLink.Name == "World")
+                if (countryLink.Name != "Argentina")
                 {
                     continue;
                 }
@@ -63,8 +63,17 @@ namespace TennisOddsScrapper.BL
                     Delay();
 
                     List<DuelLink> duelsList = GetDuelsLinks(matchLink);
+                    List<Teams> teams = new List<Teams>();
                     foreach (var duelLink in duelsList)
                     {
+                        
+                        String[] words = duelLink.Name.Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
+                        teams.Add(new Teams()
+                        {
+                            HomeTeam = words[1],
+                            AwayTeam = words[0]
+                        });
+                        
                         _driver.Navigate().GoToUrl(duelLink.Url);
                         Delay();
 
@@ -232,7 +241,7 @@ namespace TennisOddsScrapper.BL
 
             IList<IWebElement> containers = SafeTryFindElements(_attemptsCount, ".table-container");
             string date = _driver.FindElement(By.CssSelector(".wrap .date")).Text;// get date
-            string gameValue = "";
+            
 
             int startIndex = date.IndexOf(' ');
             int endIndex = date.LastIndexOf(',');
@@ -248,13 +257,31 @@ namespace TennisOddsScrapper.BL
                 //Delay();
                 List<IWebElement> linksList = container.FindElements(By.CssSelector(".odds-co a")).ToList();
                 List<IWebElement> countersList = container.FindElements(By.CssSelector(".odds-cnt")).ToList();
-                
+                List<IWebElement> gameValueList = container.FindElements(By.CssSelector("strong")).ToList();
+                List<string> games = new List<string>();
+
+                foreach (var game in gameValueList)
+                {
+
+                    if (game.Text.Contains("Asian handicap "))
+                    {
+                        games.Add(game.Text.Replace("Asian handicap ", ""));
+                    }
+
+                    if (game.Text.Contains("Over/Under "))
+                    {
+                        games.Add(game.Text.Replace("Over/Under ", ""));
+                    }
+
+                }
 
                 if (linksList.Count > 0 && countersList.Count > 0)
                 {
                     IWebElement link = linksList.FirstOrDefault(); // SafeTryFindElements(_attemptsCount, ".odds-co a").FirstOrDefault();
 
                     IWebElement counterElement = countersList.FirstOrDefault(); //SafeTryFindElements(_attemptsCount, ".odds-cnt").FirstOrDefault();
+
+                    string gameValue = games.FirstOrDefault();
 
                     string counterString = counterElement.Text.Replace("(", "")
                         .Replace(")", "");
@@ -266,7 +293,8 @@ namespace TennisOddsScrapper.BL
                         counters.Add(new Counter
                         {
                             Value = counter,
-                            Link = link
+                            Link = link,
+                            GameValue = gameValue
                         });
                     }
                 }
@@ -301,7 +329,6 @@ namespace TennisOddsScrapper.BL
 
             List<IWebElement> pathHigh = _driver.FindElements(By.CssSelector(".table-main .highest")).ToList();
             List<IWebElement> pathAver = _driver.FindElements(By.CssSelector(".table-main .aver")).ToList();
-            List<IWebElement> gameValueList = _driver.FindElements(By.CssSelector(".table-header-light strong")).ToList();
 
             FindHigh finalElement = null;
 
@@ -313,23 +340,13 @@ namespace TennisOddsScrapper.BL
                 {
                     List<IWebElement> arrayHighs = high.FindElements(By.ClassName("no-border-right-highest")).ToList();
 
-                    if (gameValueList[z].Text.Contains("Asian handicap "))
-                    {
-                        gameValue = gameValueList[z].Text.Replace("Asian handicap ", "");
-                    }
-
-                    if (gameValueList[z].Text.Contains("Over/Under "))
-                    {
-                        gameValue = gameValueList[z].Text.Replace("Over/Under ", "");
-                    }
-
                     if (arrayHighs.Count == 1)
                     {
                         string arrayHighsString = arrayHighs.FirstOrDefault().Text.Replace("%", "");
                         double counter = 0;
                         if (Double.TryParse(arrayHighsString, out counter))
                         {
-                            findHighs.Add(new FindHigh(){HighInt = counter,  HighString = high, AverageString = pathAver[z], GameValue = gameValue});
+                            findHighs.Add(new FindHigh(){HighInt = counter,  HighString = high, AverageString = pathAver[z]});
                         }
                     }
                     z++;
@@ -340,7 +357,7 @@ namespace TennisOddsScrapper.BL
             //вылетает когда finalElement = NULL
             if (finalElement != null)
             {
-                return new OddValue()
+                OddValue value = new OddValue()
                 {
                     DuelLink = duelLink,
                     Average1 = finalElement.AverageString.FindElement(By.CssSelector(".right:nth-child(3)")).Text,
@@ -350,9 +367,9 @@ namespace TennisOddsScrapper.BL
                     Highest2 = finalElement.HighString.FindElement(By.CssSelector(".right:nth-child(4)")).Text,
                     HighestPayout = finalElement.HighString.FindElement(By.CssSelector(".center")).Text,
                     Tab = _driver.FindElement(By.CssSelector(".ul-nav>.active")).Text,
-                    GameValue = gameValue,
                     Date = date
                 };
+                return value;
             }
             return null;
         }

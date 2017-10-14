@@ -9,6 +9,7 @@ namespace TennisOddsScrapper.BL.Models
 {
     public class Counter
     {
+        public string GameValue { get; set; }
         public int Value { get; set; }
         public IWebElement Link { get; set; }
     }
