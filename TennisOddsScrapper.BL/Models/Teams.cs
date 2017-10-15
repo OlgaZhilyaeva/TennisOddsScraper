@@ -10,5 +10,7 @@ namespace TennisOddsScrapper.BL.Models
     {
         public string HomeTeam { get; set; }
         public string AwayTeam { get; set; }
+
+        public virtual List<OddValue> OddValues { get; set; }
     }
 }

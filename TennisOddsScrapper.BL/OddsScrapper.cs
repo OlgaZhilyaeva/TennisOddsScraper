@@ -10,6 +10,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using TennisOddsScrapper.BL.Logger;
 using TennisOddsScrapper.BL.Models;
+using TennisOddsScrapper.BL.XMLSerializator;
 
 namespace TennisOddsScrapper.BL
 {
@@ -100,7 +101,7 @@ namespace TennisOddsScrapper.BL
             // Create and insert into DB
             using (OddsDbContext db = new OddsDbContext())
             {
-
+                //TODO: teams to db
                 var duelLinks = oddsValues.Select(x => x.DuelLink).Distinct();
                 foreach (var duelLink in duelLinks)
                 {
@@ -125,7 +126,18 @@ namespace TennisOddsScrapper.BL
                 }
                 
                 db.SaveChanges();
+
             }
+
+            //*******************XML SERIALIZATION*********************************
+            SaveDataToXML(oddsValues);
+        }
+
+        private void SaveDataToXML(List<OddValue> oddsValues)
+        {
+            ISerializator serializator = null;
+            OddSerializationList oddSerialization = serializator.TransformData(oddsValues);
+            serializator.Serialize(oddSerialization);
         }
 
         private List<CountryLink> GetCountriesLinks()
@@ -238,6 +250,7 @@ namespace TennisOddsScrapper.BL
         private OddValue SetOddValuesAh(DuelLink duelLink)
         {
             List<Counter> counters = new List<Counter>();
+            string gameValue = "";
 
             IList<IWebElement> containers = SafeTryFindElements(_attemptsCount, ".table-container");
             string date = _driver.FindElement(By.CssSelector(".wrap .date")).Text;// get date
@@ -260,6 +273,7 @@ namespace TennisOddsScrapper.BL
                 List<IWebElement> gameValueList = container.FindElements(By.CssSelector("strong")).ToList();
                 List<string> games = new List<string>();
 
+
                 foreach (var game in gameValueList)
                 {
 
@@ -274,14 +288,13 @@ namespace TennisOddsScrapper.BL
                     }
 
                 }
-
                 if (linksList.Count > 0 && countersList.Count > 0)
                 {
                     IWebElement link = linksList.FirstOrDefault(); // SafeTryFindElements(_attemptsCount, ".odds-co a").FirstOrDefault();
 
                     IWebElement counterElement = countersList.FirstOrDefault(); //SafeTryFindElements(_attemptsCount, ".odds-cnt").FirstOrDefault();
 
-                    string gameValue = games.FirstOrDefault();
+                    gameValue = games.FirstOrDefault();
 
                     string counterString = counterElement.Text.Replace("(", "")
                         .Replace(")", "");
@@ -293,8 +306,7 @@ namespace TennisOddsScrapper.BL
                         counters.Add(new Counter
                         {
                             Value = counter,
-                            Link = link,
-                            GameValue = gameValue
+                            Link = link
                         });
                     }
                 }
@@ -346,7 +358,7 @@ namespace TennisOddsScrapper.BL
                         double counter = 0;
                         if (Double.TryParse(arrayHighsString, out counter))
                         {
-                            findHighs.Add(new FindHigh(){HighInt = counter,  HighString = high, AverageString = pathAver[z]});
+                            findHighs.Add(new FindHigh(){HighInt = counter,  HighString = high, AverageString = pathAver[z], GameValue = gameValue});
                         }
                     }
                     z++;
@@ -360,6 +372,7 @@ namespace TennisOddsScrapper.BL
                 OddValue value = new OddValue()
                 {
                     DuelLink = duelLink,
+                    GameValue = finalElement.GameValue,
                     Average1 = finalElement.AverageString.FindElement(By.CssSelector(".right:nth-child(3)")).Text,
                     Average2 = finalElement.AverageString.FindElement(By.CssSelector(".right:nth-child(4)")).Text,
                     AveragePayout = finalElement.AverageString.FindElement(By.CssSelector(".aver .center")).Text,

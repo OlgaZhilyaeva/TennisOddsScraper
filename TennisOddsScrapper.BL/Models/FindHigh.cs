@@ -15,6 +15,6 @@ namespace TennisOddsScrapper.BL.Models
 
         public IWebElement HighString { get; set; }
 
-        
+        public string GameValue { get; set; }
     }
 }

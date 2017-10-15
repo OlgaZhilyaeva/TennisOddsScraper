@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TennisOddsScrapper.BL;
 using TennisOddsScrapper.BL.Models;
+using TennisOddsScrapper.BL.XMLSerializator;
+
 
 namespace TennisOddsScrapper.Tests
 {
@@ -25,6 +28,51 @@ namespace TennisOddsScrapper.Tests
             DuelLink duelLink = new DuelLink() { MatchLink = null, Url = "dfdf", DuelLinkId = 6, Name = "Name" };
             OddsDbContext db = new OddsDbContext();
             db.DuelLinks.Add(duelLink);
+        }
+
+        [TestMethod]
+        public void XML()
+        {
+            ISerializator serializator = new Serializator();
+            serializator.Path = @"D:\UpWork\Xml.xml";
+            OddSerializationList list = serializator.TransformData(new List<OddValue>()
+            {
+               new OddValue()
+               {
+                   Average1 = "av1",
+                   Average2 =  "av2",
+                   AveragePayout = "avPay",
+                   GameValue = "svsv",
+                   Highest1 = "nfkdnv",
+                   Highest2 = "mlvkdm",
+                   HighestPayout = "mkvm",
+                   Tab = "Home/Away"
+               },
+                new OddValue()
+                {
+                    Average1 = "av1",
+                    Average2 =  "av2",
+                    AveragePayout = "avPay",
+                    GameValue = "svsv",
+                    Highest1 = "nfkdnv",
+                    Highest2 = "mlvkdm",
+                    HighestPayout = "mkvm",
+                    Tab = "Asian Handicap"
+                },
+                new OddValue()
+                {
+                    Average1 = "av1",
+                    Average2 =  "av2",
+                    AveragePayout = "avPay",
+                    GameValue = "svsv",
+                    Highest1 = "nfkdnv",
+                    Highest2 = "mlvkdm",
+                    HighestPayout = "mkvm",
+                    Tab = "Over/Under"
+                }
+            });
+
+            serializator.Serialize(list);
         }
 
         [TestMethod]

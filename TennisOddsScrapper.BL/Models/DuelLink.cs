@@ -14,6 +14,8 @@ namespace TennisOddsScrapper.BL.Models
 
         public MatchLink MatchLink { get; set; }
 
+        public virtual List<OddValue> OddValues { get; set; }
+
         public override string ToString()
         {
             return $"{Name}: {Url}";

@@ -63,8 +63,12 @@
     <Compile Include="Models\FindHigh.cs" />
     <Compile Include="Models\MatchLink.cs" />
     <Compile Include="Models\OddValue.cs" />
+    <Compile Include="XMLSerializator\ISerializator.cs" />
+    <Compile Include="XMLSerializator\OddSerializationList.cs" />
+    <Compile Include="XMLSerializator\OddSerializationModel.cs" />
     <Compile Include="OddsScrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XMLSerializator\Serializator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
