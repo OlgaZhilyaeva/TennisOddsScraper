@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 
 namespace TennisOddsScrapper.BL.XMLSerializator
 {
-    [XmlRoot("Matches")]
+    [XmlRoot("Matches", Namespace = "")]
     public class OddSerializationList : List<OddSerializationModel>
     {
         public OddSerializationList()

@@ -63,7 +63,10 @@ namespace TennisOddsScrapper.BL.XMLSerializator
             XmlSerializer serializer = new XmlSerializer(typeof(OddSerializationList));
             using (TextWriter writer = new StreamWriter(Path))
             {
-                serializer.Serialize(writer, oddSerialization);
+                var xmlnsEmpty = new XmlSerializerNamespaces();
+                xmlnsEmpty.Add("", "");
+
+                serializer.Serialize(writer, oddSerialization, xmlnsEmpty);
             }
         }
     }
