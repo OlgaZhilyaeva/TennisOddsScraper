@@ -26,16 +26,16 @@
             </ComboBox>
         </StackPanel>
         <StackPanel Orientation="Horizontal"  Grid.Row="1" Margin="0,10,0,10">
-            <Button Click="ButtonBase_OnClick1" Width="130" Margin=" 25, 0, 40, 0">Get new information</Button>
-            <Button Click="ButtonBase_OnClick" Width="130" Margin=" 0, 0, 40, 0">Get from Data Base</Button>
-            <Button Width="130">Create XML</Button>
+            <Button Name="BtnGetNewInfo" Click="BtnGetNewInfo_OnClick"  Width="130" Margin=" 25, 0, 40, 0" Content="Get new information"/>
+            <Button Name="BtnPutToDb" Click="BtnPutToDb_OnClick" Width="130" Margin=" 0, 0, 40, 0" Content="Put to Data Base"/>
+            <Button Name="BtnCreateXml" Click="BtnCreateXml_OnClick" Width="130" Content="Create XML"/>
         </StackPanel>
 
         <ProgressBar Margin="0, 10, 0, 10" Height="20" Grid.Row="2" ></ProgressBar>
 
-        <DataGrid ColumnWidth="Auto" Grid.Row="4" x:Name="phonesGrid" AutoGenerateColumns="False" ItemsSource="{DynamicResource ResourceKey=OUItemModel}">
+        <DataGrid ColumnWidth="Auto" Grid.Row="3" x:Name="OddsDGV" AutoGenerateColumns="False" ItemsSource="{Binding OddsValuesList}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Date" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Average1}" Header="Date" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Header="Country" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Header="Cup" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Header="Match" Width="*"></DataGridTextColumn>

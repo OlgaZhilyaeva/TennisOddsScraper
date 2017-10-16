@@ -2,8 +2,10 @@
 using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,9 +26,23 @@ namespace TennisOddsScraper.View
     /// </summary>
     public partial class MainWindow : Window
     {
+        private OddsScrapper _scrapper;
+        private ObservableCollection<OddValue> _oddsValuesList;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            _scrapper = new OddsScrapper();
+            _scrapper.ItemAddedEvent = ItemAddedEvent;
+        }
+
+        private void ItemAddedEvent(OddValue value)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                OddsValuesList.Add(value);
+            });
         }
 
         private void ComboBox_Selected(object sender, RoutedEventArgs e)
@@ -38,11 +54,7 @@ namespace TennisOddsScraper.View
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            MainViewModel viewModel = new MainViewModel();
-            viewModel.WindowTitle = "I Love You";
-            viewModel.MainText = "Olya";
-
-            this.DataContext = viewModel;
+            this.DataContext = this;
         }
 
         //private void Button_Click(object sender, RoutedEventArgs e)
@@ -71,14 +83,14 @@ namespace TennisOddsScraper.View
             //foreach (var dbDuelLink in db.DuelLinks)
             //{
             //    System.Windows.MessageBox.Show("Test"+ dbDuelLink.Name);
-                
+
             //}
 
             OddsScrapper scrapper = new OddsScrapper();
 
             scrapper.LogIn();
             scrapper.StartScraping();
-            
+
 
 
 
@@ -93,6 +105,106 @@ namespace TennisOddsScraper.View
                 System.Windows.MessageBox.Show(dbDuelLink.Name);
 
             }
+        }
+
+        private void BtnGetNewInfo_OnClick(object sender, RoutedEventArgs e)
+        {
+            //OddsDbContext context = new OddsDbContext();
+            List<OddValue> list = new List<OddValue>()
+            {
+                new OddValue()
+                {
+                    Average1 = "av1",
+                    Average2 = "av2",
+                    AveragePayout = "avPay",
+                    GameValue = "svsv",
+                    Highest1 = "nfkdnv",
+                    Highest2 = "mlvkdm",
+                    HighestPayout = "mkvm",
+                    Tab = "Home/Away"
+                },
+                new OddValue()
+                {
+                    Average1 = "av1",
+                    Average2 = "av2",
+                    AveragePayout = "avPay",
+                    GameValue = "svsv",
+                    Highest1 = "nfkdnv",
+                    Highest2 = "mlvkdm",
+                    HighestPayout = "mkvm",
+                    Tab = "Asian Handicap"
+                },
+                new OddValue()
+                {
+                    Average1 = "av1",
+                    Average2 = "av2",
+                    AveragePayout = "avPay",
+                    GameValue = "svsv",
+                    Highest1 = "nfkdnv",
+                    Highest2 = "mlvkdm",
+                    HighestPayout = "mkvm",
+                    Tab = "Over/Under"
+                }
+            };
+
+            //Task.Run(() =>
+            //{
+            //    while (true)
+            //    {
+            //        Thread.Sleep(1000);
+
+            //        //_scrapper.Initialize();
+            //        //_scrapper.LogIn();
+            //        //_scrapper.StartScraping();
+
+            //        Application.Current.Dispatcher.Invoke(() =>
+            //        {
+            //            OddsValuesList.Add(new OddValue()
+            //            {
+            //                Average1 = "average1"
+            //            });
+            //            // System.Windows.MessageBox.Show("Test");
+            //        });
+            //    }
+            //});
+
+            Task.Run(() =>
+            {
+                _scrapper.Initialize();
+                _scrapper.LogIn();
+                _scrapper.StartScraping();
+            });
+
+
+            List<OddValue> oddsValues = _scrapper.OddValues;
+
+            //OddsValuesList.Add(new OddValue()
+            //{
+            //    Average1 = "average1"
+            //});
+        }
+
+        public ObservableCollection<OddValue> OddsValuesList
+        {
+            get
+            {
+                if (_oddsValuesList == null)
+                {
+                    _oddsValuesList = new ObservableCollection<OddValue>();
+                }
+                return _oddsValuesList;
+            }
+            set { _oddsValuesList = value; }
+        }
+
+        private void BtnCreateXml_OnClick(object sender, RoutedEventArgs e)
+        {
+            _scrapper.SaveDataToXML();
+        }
+
+        private void BtnPutToDb_OnClick(object sender, RoutedEventArgs e)
+        {
+            _scrapper.PutDataToDb();
         }
     }
 }

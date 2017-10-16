@@ -14,18 +14,33 @@ using TennisOddsScrapper.BL.XMLSerializator;
 
 namespace TennisOddsScrapper.BL
 {
+    public delegate void ItemAddedDelegate(OddValue value);
+
     public class OddsScrapper
     {
+        public ItemAddedDelegate ItemAddedEvent { get; set; }
+
+        private List<OddValue> _oddsValues;
         private IWebDriver _driver;
         private Random _random;
         private ILogger _logger = new Logger.Logger();
+
+        public List<OddValue> OddValues
+        {
+            get { return _oddsValues; }
+        }
 
         private int _attemptsCount = 3;
 
         public OddsScrapper()
         {
-            _driver = new ChromeDriver();
             _random = new Random();
+        }
+
+        public void Initialize()
+        {
+            _driver = new ChromeDriver();
+            _oddsValues = new List<OddValue>();
         }
 
         public void LogIn()
@@ -42,15 +57,15 @@ namespace TennisOddsScrapper.BL
 
         public void StartScraping()
         {
+            _oddsValues.Clear();
             _driver.Navigate().GoToUrl("http://www.oddsportal.com/tennis/");
             Delay();
 
-            List<OddValue> oddsValues = new List<OddValue>();
             List<CountryLink> countriesLinks = GetCountriesLinks();
 
             foreach (var countryLink in countriesLinks)
             {
-                if (countryLink.Name != "Argentina")
+                if (countryLink.Name != "Belgium")
                 {
                     continue;
                 }
@@ -80,63 +95,75 @@ namespace TennisOddsScrapper.BL
 
                         var oddVal = SetOddValuesHa(duelLink);
                         if (oddVal != null)
-                            oddsValues.Add(oddVal);
+                            AddOddValue(oddVal);
 
                         if (NaviagateToTab(duelLink, "Asian Handicap"))
                         {
                             oddVal = SetOddValuesAh(duelLink);
                             if (oddVal != null)
-                                oddsValues.Add(oddVal);
+                                AddOddValue(oddVal);
                         }
 
                         if (NaviagateToTab(duelLink, "Over/Under"))
                         {
                             oddVal = SetOddValuesAh(duelLink);
                             if (oddVal != null)
-                                oddsValues.Add(oddVal);
+                                AddOddValue(oddVal);
                         }
                     }
                 }
             }
+           
+            //output to DGV
+
+        }
+
+        private void AddOddValue(OddValue value)
+        {
+            _oddsValues.Add(value);
+
+            if(ItemAddedEvent != null)
+                ItemAddedEvent.Invoke(value);
+        }
+
+        public void PutDataToDb()
+        {
             // Create and insert into DB
             using (OddsDbContext db = new OddsDbContext())
             {
                 //TODO: teams to db
-                var duelLinks = oddsValues.Select(x => x.DuelLink).Distinct();
+                var duelLinks = _oddsValues.Select(x => x.DuelLink).Distinct();
                 foreach (var duelLink in duelLinks)
                 {
                     db.DuelLinks.Add(duelLink);
                 }
 
-                var matchLinks = oddsValues.Select(x => x.DuelLink.MatchLink).Distinct();
+                var matchLinks = _oddsValues.Select(x => x.DuelLink.MatchLink).Distinct();
                 foreach (var matchLink in matchLinks)
                 {
                     db.MatchLinks.Add(matchLink);
                 }
 
-                var countryLinks = oddsValues.Select(x => x.DuelLink.MatchLink.CountryLink).Distinct();
+                var countryLinks = _oddsValues.Select(x => x.DuelLink.MatchLink.CountryLink).Distinct();
                 foreach (var countryLink in countryLinks)
                 {
                     db.CountryLinks.Add(countryLink);
                 }
 
-                foreach (var oddValue in oddsValues)
+                foreach (var oddValue in _oddsValues)
                 {
                     db.OddValues.Add(oddValue);
                 }
-                
+
                 db.SaveChanges();
-
             }
-
-            //*******************XML SERIALIZATION*********************************
-            SaveDataToXML(oddsValues);
         }
 
-        private void SaveDataToXML(List<OddValue> oddsValues)
+        //*******************XML SERIALIZATION*********************************
+        public void SaveDataToXML()
         {
             ISerializator serializator = null;
-            OddSerializationList oddSerialization = serializator.TransformData(oddsValues);
+            OddSerializationList oddSerialization = serializator.TransformData(_oddsValues);
             serializator.Serialize(oddSerialization);
         }
 
