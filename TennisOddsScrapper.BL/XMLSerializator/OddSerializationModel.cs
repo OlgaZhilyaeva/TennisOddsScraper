@@ -24,8 +24,8 @@ namespace TennisOddsScrapper.BL.XMLSerializator
         public string OddsAHeqAway { get; set; }
         public string AverOddsAHeqHome { get; set; }
         public string AverOddsAHeqAway { get; set; }
-        public string PayoutAverOddsAHeq { get; set; }
-        public string PayoutOddsAHeq { get; set; }
+        public string PayoutAverOddsAHeqHomeAway { get; set; }
+        public string PayoutOddsAHeqHomeAway { get; set; }
 
         [XmlElement("OUeq-BET")]
         public string OUeq_BET { get; set; }
@@ -33,8 +33,8 @@ namespace TennisOddsScrapper.BL.XMLSerializator
         public string OddsOUeqUNDER { get; set; }
         public string AverOddsOUeqOVER { get; set; }
         public string AverOddsOUeqUNDER { get; set; }
-        public string PayoutAverOddsOUeq { get; set; }
-        public string PayoutOddsOUeq { get; set; }
+        public string PayoutAverOddsOUeqOVER { get; set; }
+        public string PayoutOddsOUeqUNDER { get; set; }
 
     }
 }

@@ -113,5 +113,91 @@ namespace TennisOddsScrapper.Tests
             
         }
 
+        [TestMethod]
+        public void khsdvcdysvb()
+        {
+            Serializator serializator = new Serializator();
+
+            List<OddValue> list = new List<OddValue>()
+            {
+                new OddValue()
+                {
+                    Average1 = "av1",
+                    Average2 =  "av2",
+                    AveragePayout = "avPay",
+                    GameValue = "svsv",
+                    Highest1 = "nfkdnv",
+                    Highest2 = "mlvkdm",
+                    HighestPayout = "mkvm",
+                    Tab = "Home/Away",
+                    Group = 0
+                },
+                new OddValue()
+                {
+                    Average1 = "av1",
+                    Average2 =  "av2",
+                    AveragePayout = "avPay",
+                    GameValue = "svsv",
+                    Highest1 = "nfkdnv",
+                    Highest2 = "mlvkdm",
+                    HighestPayout = "mkvm",
+                    Tab = "Asian Handicap",
+                    Group = 0
+                },
+                new OddValue()
+                {
+                    Average1 = "av1",
+                    Average2 =  "av2",
+                    AveragePayout = "avPay",
+                    GameValue = "svsv",
+                    Highest1 = "nfkdnv",
+                    Highest2 = "mlvkdm",
+                    HighestPayout = "mkvm",
+                    Tab = "Over/Under",
+                    Group = 0
+                },
+                new OddValue()
+                    {
+                    Average1 = "av1",
+                    Average2 =  "av2",
+                    AveragePayout = "avPay",
+                    GameValue = "svsv",
+                    Highest1 = "nfkdnv",
+                    Highest2 = "mlvkdm",
+                    HighestPayout = "mkvm",
+                    Tab = "Home/Away",
+                    Group = 1
+                },
+                new OddValue()
+                {
+                    Average1 = "av1",
+                    Average2 =  "av2",
+                    AveragePayout = "avPay",
+                    GameValue = "svsv",
+                    Highest1 = "nfkdnv",
+                    Highest2 = "mlvkdm",
+                    HighestPayout = "mkvm",
+                    Tab = "Asian Handicap",
+                    Group = 1
+                },
+                new OddValue()
+                {
+                    Average1 = "av1",
+                    Average2 =  "av2",
+                    AveragePayout = "avPay",
+                    GameValue = "svsv",
+                    Highest1 = "nfkdnv",
+                    Highest2 = "mlvkdm",
+                    HighestPayout = "mkvm",
+                    Tab = "Over/Under",
+                    Group = 2
+                }
+            };
+            OddSerializationList z = serializator.TransformData(list);
+            serializator.Path = @"D:\UpWork\Xml.xml";
+            serializator.Serialize(z);
+
+        }
+
     }
 }

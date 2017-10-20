@@ -9,6 +9,7 @@ namespace TennisOddsScrapper.BL.Models
     public class OddValue: IEquatable<OddValue>
     {
         public int OddValueId { get; set; }
+        public int Group { get; set; }
         public string Tab { get; set; }
         public string Average1 { get; set; }
         public string Average2 { get; set; }

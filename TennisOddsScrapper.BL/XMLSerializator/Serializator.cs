@@ -17,42 +17,44 @@ namespace TennisOddsScrapper.BL.XMLSerializator
         {
 
             OddSerializationList temperaryModels = new OddSerializationList();
-            foreach (var oddsValue in oddsValues)
+            List<IGrouping<int, OddValue>> a = oddsValues.GroupBy(x => x.Group).ToList();
+            foreach (var oddsValue in a)
             {
                 OddSerializationModel tempModel = new OddSerializationModel();
-
-                if (oddsValue.Tab == "Home/Away")
+                foreach (var oddValue in oddsValue)
                 {
-                    tempModel.OddsHome = oddsValue.Highest1;
-                    tempModel.OddsAway = oddsValue.Highest2;
-                    tempModel.AverOddsHome = oddsValue.Average1;
-                    tempModel.AverOddsAway = oddsValue.Average2;
-                    tempModel.PayoutAverOddsHomeAway = oddsValue.AveragePayout;
-                    tempModel.PayoutOddsHomeAway = oddsValue.HighestPayout;
-                }
+                    if (oddValue.Tab == "Home/Away")
+                    {
+                        tempModel.OddsHome = oddValue.Highest1;
+                        tempModel.OddsAway = oddValue.Highest2;
+                        tempModel.AverOddsHome = oddValue.Average1;
+                        tempModel.AverOddsAway = oddValue.Average2;
+                        tempModel.PayoutAverOddsHomeAway = oddValue.AveragePayout;
+                        tempModel.PayoutOddsHomeAway = oddValue.HighestPayout;
+                    }
 
-                if (oddsValue.Tab == "Asian Handicap")
-                {
-                    tempModel.AHeq_BET = oddsValue.GameValue;
-                    tempModel.OddsAHeqHome = oddsValue.Highest1;
-                    tempModel.OddsAHeqAway = oddsValue.Highest2;
-                    tempModel.AverOddsAHeqHome = oddsValue.Average1;
-                    tempModel.AverOddsAHeqAway = oddsValue.Average2;
-                    tempModel.PayoutAverOddsHomeAway = oddsValue.AveragePayout;
-                    tempModel.PayoutOddsHomeAway = oddsValue.HighestPayout;
-                }
+                    if (oddValue.Tab == "Asian Handicap")
+                    {
+                        tempModel.AHeq_BET = oddValue.GameValue;
+                        tempModel.OddsAHeqHome = oddValue.Highest1;
+                        tempModel.OddsAHeqAway = oddValue.Highest2;
+                        tempModel.AverOddsAHeqHome = oddValue.Average1;
+                        tempModel.AverOddsAHeqAway = oddValue.Average2;
+                        tempModel.PayoutAverOddsAHeqHomeAway = oddValue.AveragePayout;
+                        tempModel.PayoutOddsAHeqHomeAway = oddValue.HighestPayout;
+                    }
 
-                if (oddsValue.Tab == "Over/Under")
-                {
-                    tempModel.OUeq_BET = oddsValue.GameValue;
-                    tempModel.OddsOUeqOVER = oddsValue.Highest1;
-                    tempModel.OddsOUeqUNDER = oddsValue.Highest2;
-                    tempModel.AverOddsOUeqOVER = oddsValue.Average1;
-                    tempModel.AverOddsOUeqUNDER = oddsValue.Average2;
-                    tempModel.PayoutAverOddsOUeq = oddsValue.AveragePayout;
-                    tempModel.PayoutOddsOUeq = oddsValue.HighestPayout;
+                    if (oddValue.Tab == "Over/Under")
+                    {
+                        tempModel.OUeq_BET = oddValue.GameValue;
+                        tempModel.OddsOUeqOVER = oddValue.Highest1;
+                        tempModel.OddsOUeqUNDER = oddValue.Highest2;
+                        tempModel.AverOddsOUeqOVER = oddValue.Average1;
+                        tempModel.AverOddsOUeqUNDER = oddValue.Average2;
+                        tempModel.PayoutAverOddsOUeqOVER = oddValue.AveragePayout;
+                        tempModel.PayoutOddsOUeqUNDER = oddValue.HighestPayout;
+                    }
                 }
-
                 temperaryModels.Add(tempModel);
             }
             return temperaryModels;

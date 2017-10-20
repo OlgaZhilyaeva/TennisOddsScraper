@@ -70,29 +70,6 @@ namespace TennisOddsScraper.View
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
 
-            //DuelLink duelLink = new DuelLink() { MatchLink = null, Url = "dfdf", DuelLinkId = 6, Name = "Name" };
-            //OddsDbContext db = new OddsDbContext();
-            //foreach (var dbDuelLink in db.DuelLinks)
-            //{
-            //    System.Windows.MessageBox.Show("Test" + dbDuelLink.Name);
-
-            //}
-            //db.DuelLinks.Add(duelLink);
-            //db.SaveChanges();
-
-            //foreach (var dbDuelLink in db.DuelLinks)
-            //{
-            //    System.Windows.MessageBox.Show("Test"+ dbDuelLink.Name);
-
-            //}
-
-            OddsScrapper scrapper = new OddsScrapper();
-
-            scrapper.LogIn();
-            scrapper.StartScraping();
-
-
-
 
         }
 
@@ -199,12 +176,18 @@ namespace TennisOddsScraper.View
 
         private void BtnCreateXml_OnClick(object sender, RoutedEventArgs e)
         {
+            _scrapper.StartScraping();
             _scrapper.SaveDataToXML();
         }
 
         private void BtnPutToDb_OnClick(object sender, RoutedEventArgs e)
         {
             _scrapper.PutDataToDb();
+        }
+
+        private void Login_OnClick(object sender, RoutedEventArgs e)
+        {
+            _scrapper.LogIn();
         }
     }
 }

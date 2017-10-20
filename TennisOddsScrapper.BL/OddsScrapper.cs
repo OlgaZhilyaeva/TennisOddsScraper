@@ -45,7 +45,8 @@ namespace TennisOddsScrapper.BL
 
         public void LogIn()
         {
-            _driver.Navigate().GoToUrl("http://www.oddsportal.com/login/");
+            IWebDriver driver = _driver;
+            driver.Navigate().GoToUrl("http://www.oddsportal.com/login/");
             IWebElement login = _driver.FindElement(By.Id("login-username1"));
             IWebElement password = _driver.FindElement(By.Id("login-password1"));
 
@@ -80,9 +81,9 @@ namespace TennisOddsScrapper.BL
 
                     List<DuelLink> duelsList = GetDuelsLinks(matchLink);
                     List<Teams> teams = new List<Teams>();
+                    int group = 0;
                     foreach (var duelLink in duelsList)
                     {
-                        
                         String[] words = duelLink.Name.Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
                         teams.Add(new Teams()
                         {
@@ -93,23 +94,24 @@ namespace TennisOddsScrapper.BL
                         _driver.Navigate().GoToUrl(duelLink.Url);
                         Delay();
 
-                        var oddVal = SetOddValuesHa(duelLink);
+                        var oddVal = SetOddValuesHa(duelLink, group);
                         if (oddVal != null)
                             AddOddValue(oddVal);
 
                         if (NaviagateToTab(duelLink, "Asian Handicap"))
                         {
-                            oddVal = SetOddValuesAh(duelLink);
+                            oddVal = SetOddValuesAh(duelLink, group);
                             if (oddVal != null)
                                 AddOddValue(oddVal);
                         }
 
                         if (NaviagateToTab(duelLink, "Over/Under"))
                         {
-                            oddVal = SetOddValuesAh(duelLink);
+                            oddVal = SetOddValuesAh(duelLink, group);
                             if (oddVal != null)
                                 AddOddValue(oddVal);
                         }
+                        group++;
                     }
                 }
             }
@@ -196,7 +198,7 @@ namespace TennisOddsScrapper.BL
             }).ToList();
         }
 
-        private OddValue SetOddValuesHa(DuelLink duelLink)
+        private OddValue SetOddValuesHa(DuelLink duelLink, int group)
         {
 
             IWebElement pathAver = _driver.FindElement(By.CssSelector(".table-main .aver"));
@@ -205,6 +207,7 @@ namespace TennisOddsScrapper.BL
             return new OddValue()
             {
                 DuelLink = duelLink,
+                Group = group,
                 Average1 = pathAver.FindElement(By.CssSelector(".right:nth-child(2)")).Text,
                 Average2 = pathAver.FindElement(By.CssSelector(".right:nth-child(3)")).Text,
                 AveragePayout = pathAver.FindElement(By.CssSelector(".aver .center")).Text,
@@ -274,7 +277,7 @@ namespace TennisOddsScrapper.BL
             _driver.FindElement(By.CssSelector("#tab-nav-main ul > li a[title='Over/Under']")).Click(); //goto O/U
         }
 
-        private OddValue SetOddValuesAh(DuelLink duelLink)
+        private OddValue SetOddValuesAh(DuelLink duelLink, int group)
         {
             List<Counter> counters = new List<Counter>();
             string gameValue = "";
@@ -393,12 +396,12 @@ namespace TennisOddsScrapper.BL
                 finalElement = findHighs.OrderByDescending(x => x.HighInt).FirstOrDefault();
             }
 
-            //вылетает когда finalElement = NULL
             if (finalElement != null)
             {
                 OddValue value = new OddValue()
                 {
                     DuelLink = duelLink,
+                    Group = group,
                     GameValue = finalElement.GameValue,
                     Average1 = finalElement.AverageString.FindElement(By.CssSelector(".right:nth-child(3)")).Text,
                     Average2 = finalElement.AverageString.FindElement(By.CssSelector(".right:nth-child(4)")).Text,
