@@ -18,6 +18,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TennisOddsScrapper.BL;
 using TennisOddsScrapper.BL.Models;
+using TennisOddsScrapper.BL.XMLSerializator;
 
 namespace TennisOddsScraper.View
 {
@@ -28,13 +29,15 @@ namespace TennisOddsScraper.View
     {
         private OddsScrapper _scrapper;
         private ObservableCollection<OddValue> _oddsValuesList;
-
+        private List<OddValue> Oddslist;
         public MainWindow()
         {
             InitializeComponent();
 
             _scrapper = new OddsScrapper();
             _scrapper.ItemAddedEvent = ItemAddedEvent;
+            Oddslist = _scrapper.OddValues;
+
         }
 
         private void ItemAddedEvent(OddValue value)
@@ -57,20 +60,9 @@ namespace TennisOddsScraper.View
             this.DataContext = this;
         }
 
-        //private void Button_Click(object sender, RoutedEventArgs e)
-        //{
-        //    IWebDriver driver = new ChromeDriver();
-        //    driver.Navigate().GoToUrl("http://google.com");
-
-        //    driver.FindElement(By.Id("lst-ib")).SendKeys("I love Alex");
-        //    driver.FindElement(By.Id("lst-ib")).Submit();
-        //}
-
-
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-
-
+            
         }
 
         private void ButtonBase_OnClick1(object sender, RoutedEventArgs e)
@@ -80,85 +72,22 @@ namespace TennisOddsScraper.View
             foreach (var dbDuelLink in db.DuelLinks)
             {
                 System.Windows.MessageBox.Show(dbDuelLink.Name);
-
             }
         }
 
         private void BtnGetNewInfo_OnClick(object sender, RoutedEventArgs e)
         {
-            //OddsDbContext context = new OddsDbContext();
-            List<OddValue> list = new List<OddValue>()
-            {
-                new OddValue()
-                {
-                    Average1 = "av1",
-                    Average2 = "av2",
-                    AveragePayout = "avPay",
-                    GameValue = "svsv",
-                    Highest1 = "nfkdnv",
-                    Highest2 = "mlvkdm",
-                    HighestPayout = "mkvm",
-                    Tab = "Home/Away"
-                },
-                new OddValue()
-                {
-                    Average1 = "av1",
-                    Average2 = "av2",
-                    AveragePayout = "avPay",
-                    GameValue = "svsv",
-                    Highest1 = "nfkdnv",
-                    Highest2 = "mlvkdm",
-                    HighestPayout = "mkvm",
-                    Tab = "Asian Handicap"
-                },
-                new OddValue()
-                {
-                    Average1 = "av1",
-                    Average2 = "av2",
-                    AveragePayout = "avPay",
-                    GameValue = "svsv",
-                    Highest1 = "nfkdnv",
-                    Highest2 = "mlvkdm",
-                    HighestPayout = "mkvm",
-                    Tab = "Over/Under"
-                }
-            };
-
-            //Task.Run(() =>
-            //{
-            //    while (true)
-            //    {
-            //        Thread.Sleep(1000);
-
-            //        //_scrapper.Initialize();
-            //        //_scrapper.LogIn();
-            //        //_scrapper.StartScraping();
-
-            //        Application.Current.Dispatcher.Invoke(() =>
-            //        {
-            //            OddsValuesList.Add(new OddValue()
-            //            {
-            //                Average1 = "average1"
-            //            });
-            //            // System.Windows.MessageBox.Show("Test");
-            //        });
-            //    }
-            //});
-
+            List<>
+            Serializator serializator = new Serializator();
             Task.Run(() =>
             {
                 _scrapper.Initialize();
                 _scrapper.LogIn();
                 _scrapper.StartScraping();
+                serializator.TransformData(Oddslist);
             });
 
-
             List<OddValue> oddsValues = _scrapper.OddValues;
-
-            //OddsValuesList.Add(new OddValue()
-            //{
-            //    Average1 = "average1"
-            //});
         }
 
         public ObservableCollection<OddValue> OddsValuesList
@@ -176,8 +105,17 @@ namespace TennisOddsScraper.View
 
         private void BtnCreateXml_OnClick(object sender, RoutedEventArgs e)
         {
-            _scrapper.StartScraping();
-            _scrapper.SaveDataToXML();
+           
+            Task.Run(() =>
+                SaveDataToXML(Oddslist)
+            );
+
+        }
+        public void SaveDataToXML(List<OddValue> _oddsValues)
+        {
+            ISerializator serializator = null;
+            OddSerializationList oddSerialization = serializator.TransformData(_oddsValues);
+            serializator.Serialize(oddSerialization);
         }
 
         private void BtnPutToDb_OnClick(object sender, RoutedEventArgs e)

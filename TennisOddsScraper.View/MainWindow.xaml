@@ -41,7 +41,7 @@
                 <DataGridTextColumn Binding="{Binding TeamsLink.HomeTeam}" Header="HomeTeam" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding TeamsLink.AwayTeam}" Header="AwayTeam" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding DuelLink.MatchLink.CountryLink}" Header="Country" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="Match" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Binding ="{Binding}"  Header="Match" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Header="Av1" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Header="Av2" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Header="AvPayout" Width="*"></DataGridTextColumn>

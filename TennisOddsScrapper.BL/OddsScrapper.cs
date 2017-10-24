@@ -115,7 +115,7 @@ namespace TennisOddsScrapper.BL
                     }
                 }
             }
-           
+            
             //output to DGV
 
         }
@@ -162,12 +162,7 @@ namespace TennisOddsScrapper.BL
         }
 
         //*******************XML SERIALIZATION*********************************
-        public void SaveDataToXML()
-        {
-            ISerializator serializator = null;
-            OddSerializationList oddSerialization = serializator.TransformData(_oddsValues);
-            serializator.Serialize(oddSerialization);
-        }
+
 
         private List<CountryLink> GetCountriesLinks()
         {
