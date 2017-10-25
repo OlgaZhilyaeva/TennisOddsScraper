@@ -36,8 +36,13 @@ namespace TennisOddsScraper.View
         {
             InitializeComponent();
 
+            // For tests only.
             _serializator = new SerializatorStub();
             _scrapper = new OddsScrapperStub();
+
+            // Uncomment for production.
+            // _serializator = new Serializator();
+            // _scrapper = new OddsScrapper();
 
             Oddslist = _scrapper.OddValues;
             OddsValuesList = new ObservableCollection<OddSerializationModel>();
