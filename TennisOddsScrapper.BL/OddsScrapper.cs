@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -14,11 +15,43 @@ using TennisOddsScrapper.BL.XMLSerializator;
 
 namespace TennisOddsScrapper.BL
 {
-    public delegate void ItemAddedDelegate(OddValue value);
-
-    public class OddsScrapper
+    public class OddsScrapperStub : IOddsScrapper
     {
-        public ItemAddedDelegate ItemAddedEvent { get; set; }
+        public List<OddValue> OddValues { get; set; }
+
+        public OddsScrapperStub()
+        {
+            OddValues = new List<OddValue>();
+        }
+
+        public void Delay()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Initialize()
+        {
+            Debug.WriteLine(nameof(Initialize));
+        }
+
+        public void LogIn()
+        {
+            Debug.WriteLine(nameof(LogIn));
+        }
+
+        public void PutDataToDb()
+        {
+            Debug.WriteLine(nameof(PutDataToDb));
+        }
+
+        public void StartScraping()
+        {
+            Debug.WriteLine(nameof(StartScraping));
+        }
+    }
+
+    public class OddsScrapper : IOddsScrapper
+    {
 
         private List<OddValue> _oddsValues;
         private IWebDriver _driver;
@@ -123,42 +156,6 @@ namespace TennisOddsScrapper.BL
         private void AddOddValue(OddValue value)
         {
             _oddsValues.Add(value);
-
-            if(ItemAddedEvent != null)
-                ItemAddedEvent.Invoke(value);
-        }
-
-        public void PutDataToDb()
-        {
-            // Create and insert into DB
-            using (OddsDbContext db = new OddsDbContext())
-            {
-                //TODO: teams to db
-                var duelLinks = _oddsValues.Select(x => x.DuelLink).Distinct();
-                foreach (var duelLink in duelLinks)
-                {
-                    db.DuelLinks.Add(duelLink);
-                }
-
-                var matchLinks = _oddsValues.Select(x => x.DuelLink.MatchLink).Distinct();
-                foreach (var matchLink in matchLinks)
-                {
-                    db.MatchLinks.Add(matchLink);
-                }
-
-                var countryLinks = _oddsValues.Select(x => x.DuelLink.MatchLink.CountryLink).Distinct();
-                foreach (var countryLink in countryLinks)
-                {
-                    db.CountryLinks.Add(countryLink);
-                }
-
-                foreach (var oddValue in _oddsValues)
-                {
-                    db.OddValues.Add(oddValue);
-                }
-
-                db.SaveChanges();
-            }
         }
 
         //*******************XML SERIALIZATION*********************************

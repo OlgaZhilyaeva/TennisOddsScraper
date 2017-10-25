@@ -27,25 +27,20 @@ namespace TennisOddsScraper.View
     /// </summary>
     public partial class MainWindow : Window
     {
-        private OddsScrapper _scrapper;
-        private ObservableCollection<OddValue> _oddsValuesList;
+        private IOddsScrapper _scrapper;
         private List<OddValue> Oddslist;
+        private ISerializator _serializator;
+        private OddSerializationList _resultList;
+
         public MainWindow()
         {
             InitializeComponent();
 
-            _scrapper = new OddsScrapper();
-            _scrapper.ItemAddedEvent = ItemAddedEvent;
+            _serializator = new SerializatorStub();
+            _scrapper = new OddsScrapperStub();
+
             Oddslist = _scrapper.OddValues;
-
-        }
-
-        private void ItemAddedEvent(OddValue value)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                OddsValuesList.Add(value);
-            });
+            OddsValuesList = new ObservableCollection<OddSerializationModel>();
         }
 
         private void ComboBox_Selected(object sender, RoutedEventArgs e)
@@ -58,74 +53,101 @@ namespace TennisOddsScraper.View
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.DataContext = this;
-        }
 
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
-        private void ButtonBase_OnClick1(object sender, RoutedEventArgs e)
-        {
-            OddsDbContext db = new OddsDbContext();
-
-            foreach (var dbDuelLink in db.DuelLinks)
+            Task.Run(() =>
             {
-                System.Windows.MessageBox.Show(dbDuelLink.Name);
-            }
+                Thread.Sleep(1000);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show("Press 'Login' button to start process.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                });
+            });
         }
 
         private void BtnGetNewInfo_OnClick(object sender, RoutedEventArgs e)
         {
-            List<>
-            Serializator serializator = new Serializator();
             Task.Run(() =>
             {
-                _scrapper.Initialize();
-                _scrapper.LogIn();
                 _scrapper.StartScraping();
-                serializator.TransformData(Oddslist);
-            });
+                _resultList = _serializator.TransformData(Oddslist);
 
-            List<OddValue> oddsValues = _scrapper.OddValues;
-        }
-
-        public ObservableCollection<OddValue> OddsValuesList
-        {
-            get
-            {
-                if (_oddsValuesList == null)
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    _oddsValuesList = new ObservableCollection<OddValue>();
-                }
-                return _oddsValuesList;
-            }
-            set { _oddsValuesList = value; }
+                    OddsValuesList.Clear();
+
+                    foreach (OddSerializationModel model in _resultList)
+                    {
+                        OddsValuesList.Add(model);
+                    }
+
+                    MessageBox.Show("Scraping ended!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                });
+            });
         }
+
+        public ObservableCollection<OddSerializationModel> OddsValuesList { get; set; }
 
         private void BtnCreateXml_OnClick(object sender, RoutedEventArgs e)
         {
-           
             Task.Run(() =>
-                SaveDataToXML(Oddslist)
+                SaveDataToXml()
             );
-
         }
-        public void SaveDataToXML(List<OddValue> _oddsValues)
+        public void SaveDataToXml()
         {
-            ISerializator serializator = null;
-            OddSerializationList oddSerialization = serializator.TransformData(_oddsValues);
-            serializator.Serialize(oddSerialization);
+            _serializator.Serialize(_resultList);
+            MessageBox.Show("Export to XML complete!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void BtnPutToDb_OnClick(object sender, RoutedEventArgs e)
         {
-            _scrapper.PutDataToDb();
+            PutDataToDb();
+            MessageBox.Show("Export to database complete!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void PutDataToDb()
+        {
+            using (OddsDbContext db = new OddsDbContext())
+            {
+                List<OddValue> valuesList = Oddslist;
+
+                //TODO: teams to db
+                var duelLinks = valuesList.Select(x => x.DuelLink).Distinct();
+                foreach (var duelLink in duelLinks)
+                {
+                    db.DuelLinks.Add(duelLink);
+                }
+
+                var matchLinks = valuesList.Select(x => x.DuelLink.MatchLink).Distinct();
+                foreach (var matchLink in matchLinks)
+                {
+                    db.MatchLinks.Add(matchLink);
+                }
+
+                var countryLinks = valuesList.Select(x => x.DuelLink.MatchLink.CountryLink).Distinct();
+                foreach (var countryLink in countryLinks)
+                {
+                    db.CountryLinks.Add(countryLink);
+                }
+
+                foreach (var oddValue in valuesList)
+                {
+                    db.OddValues.Add(oddValue);
+                }
+
+                db.SaveChanges();
+            }
         }
 
         private void Login_OnClick(object sender, RoutedEventArgs e)
         {
-            _scrapper.LogIn();
+            Task.Run(() =>
+            {
+                _scrapper.Initialize();
+                _scrapper.LogIn();
+
+                MessageBox.Show("Now you can press 'Get new information' button to start scraping.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            });
         }
     }
 }
