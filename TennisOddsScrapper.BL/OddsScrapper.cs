@@ -34,7 +34,7 @@ namespace TennisOddsScrapper.BL
             Debug.WriteLine(nameof(Initialize));
         }
 
-        public void LogIn()
+        public void LogIn(string a, string b)
         {
             Debug.WriteLine(nameof(LogIn));
         }
@@ -52,8 +52,8 @@ namespace TennisOddsScrapper.BL
 
     public class OddsScrapper : IOddsScrapper
     {
-
-        private List<OddValue> _oddsValues;
+        
+        private List<OddValue> _oddsValues = new List<OddValue>();
         private IWebDriver _driver;
         private Random _random;
         private ILogger _logger = new Logger.Logger();
@@ -61,6 +61,7 @@ namespace TennisOddsScrapper.BL
         public List<OddValue> OddValues
         {
             get { return _oddsValues; }
+            set { _oddsValues = value; }
         }
 
         private int _attemptsCount = 3;
@@ -76,16 +77,16 @@ namespace TennisOddsScrapper.BL
             _oddsValues = new List<OddValue>();
         }
 
-        public void LogIn()
+        public void LogIn( string log, string pas)
         {
             IWebDriver driver = _driver;
             driver.Navigate().GoToUrl("http://www.oddsportal.com/login/");
             IWebElement login = _driver.FindElement(By.Id("login-username1"));
             IWebElement password = _driver.FindElement(By.Id("login-password1"));
 
-            login.SendKeys("Statstat1");
+            login.SendKeys(log);
             Delay();
-            password.SendKeys("Memorex1");
+            password.SendKeys(pas);
             Delay();
         }
 
@@ -99,7 +100,7 @@ namespace TennisOddsScrapper.BL
 
             foreach (var countryLink in countriesLinks)
             {
-                if (countryLink.Name != "Belgium")
+                if (countryLink.Name != "Canada")
                 {
                     continue;
                 }
@@ -157,8 +158,6 @@ namespace TennisOddsScrapper.BL
         {
             _oddsValues.Add(value);
         }
-
-        //*******************XML SERIALIZATION*********************************
 
 
         private List<CountryLink> GetCountriesLinks()
@@ -345,6 +344,7 @@ namespace TennisOddsScrapper.BL
                 {
                     if (maxCounter.Link.Text.ToLower().Contains("compare"))
                     {
+                        Delay();
                         maxCounter.Link.Click();
                     }
                 }, () =>

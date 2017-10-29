@@ -28,7 +28,7 @@ namespace TennisOddsScraper.View
     public partial class MainWindow : Window
     {
         private IOddsScrapper _scrapper;
-        private List<OddValue> Oddslist;
+       // private List<OddValue> Oddslist;
         private ISerializator _serializator;
         private OddSerializationList _resultList;
 
@@ -37,14 +37,14 @@ namespace TennisOddsScraper.View
             InitializeComponent();
 
             // For tests only.
-            _serializator = new SerializatorStub();
-            _scrapper = new OddsScrapperStub();
+            //_serializator = new SerializatorStub();
+            //_scrapper = new OddsScrapperStub();
 
             // Uncomment for production.
-            // _serializator = new Serializator();
-            // _scrapper = new OddsScrapper();
+            _serializator = new Serializator();
+            _scrapper = new OddsScrapper();
 
-            Oddslist = _scrapper.OddValues;
+            //Oddslist = _scrapper.OddValues;
             OddsValuesList = new ObservableCollection<OddSerializationModel>();
         }
 
@@ -74,7 +74,7 @@ namespace TennisOddsScraper.View
             Task.Run(() =>
             {
                 _scrapper.StartScraping();
-                _resultList = _serializator.TransformData(Oddslist);
+                _resultList = _serializator.TransformData(_scrapper.OddValues);
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -114,7 +114,7 @@ namespace TennisOddsScraper.View
         {
             using (OddsDbContext db = new OddsDbContext())
             {
-                List<OddValue> valuesList = Oddslist;
+                List<OddValue> valuesList = _scrapper.OddValues;
 
                 //TODO: teams to db
                 var duelLinks = valuesList.Select(x => x.DuelLink).Distinct();
@@ -146,10 +146,13 @@ namespace TennisOddsScraper.View
 
         private void Login_OnClick(object sender, RoutedEventArgs e)
         {
+            string login = this.login.Text;
+            string password = this.password.Password;
+
             Task.Run(() =>
             {
                 _scrapper.Initialize();
-                _scrapper.LogIn();
+                _scrapper.LogIn(login,password);
 
                 MessageBox.Show("Now you can press 'Get new information' button to start scraping.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             });

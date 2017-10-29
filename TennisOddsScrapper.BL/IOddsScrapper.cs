@@ -5,11 +5,11 @@ namespace TennisOddsScrapper.BL
 {
     public interface IOddsScrapper
     {
-        List<OddValue> OddValues { get; }
+        List<OddValue> OddValues { get; set; }
 
         void Delay();
         void Initialize();
-        void LogIn();
+        void LogIn(string a, string b);
         void StartScraping();
     }
 }
