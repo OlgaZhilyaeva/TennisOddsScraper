@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TennisOddsScrapper.BL;
+using TennisOddsScrapper.BL.Events;
 using TennisOddsScrapper.BL.Models;
 using TennisOddsScrapper.BL.XMLSerializator;
 
@@ -44,8 +45,19 @@ namespace TennisOddsScraper.View
             _serializator = new Serializator();
             _scrapper = new OddsScrapper();
 
+            _scrapper.ProgressReportedEvent +=ProgressReportedEvent;
+
             //Oddslist = _scrapper.OddValues;
             OddsValuesList = new ObservableCollection<OddSerializationModel>();
+        }
+
+        private void ProgressReportedEvent(object sender, ReportEventArgs reportEventArgs)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                PbProgress.Value = reportEventArgs.ProgressPercentage;
+                PbProgress.IsIndeterminate = PbProgress.Value == 0;
+            });
         }
 
         private void ComboBox_Selected(object sender, RoutedEventArgs e)
@@ -58,21 +70,18 @@ namespace TennisOddsScraper.View
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.DataContext = this;
-
-            Task.Run(() =>
-            {
-                Thread.Sleep(1000);
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    MessageBox.Show("Press 'Login' button to start process.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
-                });
-            });
         }
 
         private void BtnGetNewInfo_OnClick(object sender, RoutedEventArgs e)
         {
+            string login = this.login.Text;
+            string password = this.password.Password;
+
             Task.Run(() =>
             {
+                _scrapper.Initialize();
+                _scrapper.LogIn(login, password);
+
                 _scrapper.StartScraping();
                 _resultList = _serializator.TransformData(_scrapper.OddValues);
 
@@ -84,6 +93,9 @@ namespace TennisOddsScraper.View
                     {
                         OddsValuesList.Add(model);
                     }
+
+                    PbProgress.IsIndeterminate = false;
+                    PbProgress.Value = 0;
 
                     MessageBox.Show("Scraping ended!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                 });
@@ -142,20 +154,6 @@ namespace TennisOddsScraper.View
 
                 db.SaveChanges();
             }
-        }
-
-        private void Login_OnClick(object sender, RoutedEventArgs e)
-        {
-            string login = this.login.Text;
-            string password = this.password.Password;
-
-            Task.Run(() =>
-            {
-                _scrapper.Initialize();
-                _scrapper.LogIn(login,password);
-
-                MessageBox.Show("Now you can press 'Get new information' button to start scraping.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
-            });
         }
     }
 }

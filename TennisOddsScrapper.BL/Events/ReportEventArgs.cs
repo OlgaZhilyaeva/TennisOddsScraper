@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TennisOddsScrapper.BL.Logger
+namespace TennisOddsScrapper.BL.Events
 {
-    interface ILogger
+    public class ReportEventArgs : EventArgs
     {
-        void Log(string message);
+        public int ProgressPercentage { get; set; }
     }
 }

@@ -9,7 +9,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using TennisOddsScrapper.BL.Logger;
+using TennisOddsScrapper.BL.Events;
+using TennisOddsScrapper.BL.Loggers;
 using TennisOddsScrapper.BL.Models;
 using TennisOddsScrapper.BL.XMLSerializator;
 
@@ -17,6 +18,7 @@ namespace TennisOddsScrapper.BL
 {
     public class OddsScrapperStub : IOddsScrapper
     {
+        public EventHandler<ReportEventArgs> ProgressReportedEvent { get; set; }
         public List<OddValue> OddValues { get; set; }
 
         public OddsScrapperStub()
@@ -34,7 +36,7 @@ namespace TennisOddsScrapper.BL
             Debug.WriteLine(nameof(Initialize));
         }
 
-        public void LogIn(string a, string b)
+        public void LogIn(string loging, string b)
         {
             Debug.WriteLine(nameof(LogIn));
         }
@@ -56,7 +58,9 @@ namespace TennisOddsScrapper.BL
         private List<OddValue> _oddsValues = new List<OddValue>();
         private IWebDriver _driver;
         private Random _random;
-        private ILogger _logger = new Logger.Logger();
+        private ILogger _logger = new Loggers.Logger();
+
+        public EventHandler<ReportEventArgs> ProgressReportedEvent { get; set; }
 
         public List<OddValue> OddValues
         {
@@ -77,17 +81,24 @@ namespace TennisOddsScrapper.BL
             _oddsValues = new List<OddValue>();
         }
 
-        public void LogIn( string log, string pas)
+        public void LogIn(string userName, string pass)
         {
             IWebDriver driver = _driver;
             driver.Navigate().GoToUrl("http://www.oddsportal.com/login/");
-            IWebElement login = _driver.FindElement(By.Id("login-username1"));
-            IWebElement password = _driver.FindElement(By.Id("login-password1"));
 
-            login.SendKeys(log);
-            Delay();
-            password.SendKeys(pas);
-            Delay();
+            var js = $@"
+                document.querySelectorAll(""[name='login-username']"")[0].value = '{userName}';
+                document.querySelectorAll(""[name='login-password']"")[0].value = '{pass}';
+
+                document.querySelectorAll(""[name='login-submit']"")[1].click();";
+            
+            IJavaScriptExecutor executor = (IJavaScriptExecutor)_driver;
+            executor.ExecuteScript(js);
+        }
+
+        private void ReportProgress(int progress)
+        {
+            ProgressReportedEvent?.Invoke(this, new ReportEventArgs() {ProgressPercentage = progress});
         }
 
         public void StartScraping()
@@ -98,12 +109,21 @@ namespace TennisOddsScrapper.BL
 
             List<CountryLink> countriesLinks = GetCountriesLinks();
 
+            ReportProgress(0);
+            var countriesCount = countriesLinks.Count;
+            var cI = 0;
+
             foreach (var countryLink in countriesLinks)
             {
+                ReportProgress((int) (cI / (double)countriesCount * 100));
+                cI++;
+
+                // TODO: remove from production.
                 if (countryLink.Name != "Canada")
                 {
                     continue;
                 }
+
                 _driver.Navigate().GoToUrl(countryLink.Url);
                 Delay();
 
@@ -118,47 +138,55 @@ namespace TennisOddsScrapper.BL
                     int group = 0;
                     foreach (var duelLink in duelsList)
                     {
-                        String[] words = duelLink.Name.Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
-                        teams.Add(new Teams()
+                        try
                         {
-                            HomeTeam = words[1],
-                            AwayTeam = words[0]
-                        });
-                        
-                        _driver.Navigate().GoToUrl(duelLink.Url);
-                        Delay();
+                            String[] words = duelLink.Name.Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
+                            teams.Add(new Teams()
+                            {
+                                HomeTeam = words[1],
+                                AwayTeam = words[0]
+                            });
 
-                        var oddVal = SetOddValuesHa(duelLink, group);
-                        if (oddVal != null)
-                            AddOddValue(oddVal);
+                            _driver.Navigate().GoToUrl(duelLink.Url);
+                            Delay();
 
-                        if (NaviagateToTab(duelLink, "Asian Handicap"))
-                        {
-                            oddVal = SetOddValuesAh(duelLink, group);
+                            var oddVal = SetOddValuesHa(duelLink, group);
                             if (oddVal != null)
                                 AddOddValue(oddVal);
-                        }
 
-                        if (NaviagateToTab(duelLink, "Over/Under"))
-                        {
-                            oddVal = SetOddValuesAh(duelLink, group);
-                            if (oddVal != null)
-                                AddOddValue(oddVal);
+                            if (NaviagateToTab(duelLink, "Asian Handicap"))
+                            {
+                                oddVal = SetOddValuesAh(duelLink, group);
+                                if (oddVal != null)
+                                    AddOddValue(oddVal);
+                            }
+
+                            if (NaviagateToTab(duelLink, "Over/Under"))
+                            {
+                                oddVal = SetOddValuesAh(duelLink, group);
+                                if (oddVal != null)
+                                    AddOddValue(oddVal);
+                            }
+                            group++;
                         }
-                        group++;
+                        catch (Exception e)
+                        {
+                            Logger.I.Log(e);
+                        }
                     }
                 }
             }
-            
-            //output to DGV
 
+            ReportProgress(0);
+
+            _driver.Close();
+            _driver.Quit();
         }
 
         private void AddOddValue(OddValue value)
         {
             _oddsValues.Add(value);
         }
-
 
         private List<CountryLink> GetCountriesLinks()
         {

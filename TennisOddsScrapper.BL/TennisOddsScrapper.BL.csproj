@@ -53,11 +53,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\ReportEventArgs.cs" />
     <Compile Include="IOddsScrapper.cs" />
     <Compile Include="Models\Teams.cs" />
     <Compile Include="OddsDbContext.cs" />
-    <Compile Include="Logger\ILogger.cs" />
-    <Compile Include="Logger\Logger.cs" />
+    <Compile Include="Loggers\ILogger.cs" />
+    <Compile Include="Loggers\Logger.cs" />
     <Compile Include="Models\Counter.cs" />
     <Compile Include="Models\CountryLink.cs" />
     <Compile Include="Models\DuelLink.cs" />

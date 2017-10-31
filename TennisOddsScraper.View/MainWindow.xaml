@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:TennisOddsScraper.View"
         xmlns:col="clr-namespace:System.Collections;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="TennisScrapper" Height="285" Width="645"
+        MinHeight="285" MinWidth="645"
+        Title="Tennis Odds Scrapper" Height="285" Width="645"
         Loaded="Window_Loaded">
 
     <Grid>
@@ -24,15 +25,14 @@
             <PasswordBox Width="150" Height="20" Name="password" Password="Memorex1" ></PasswordBox>
         </StackPanel>
         <StackPanel Orientation="Horizontal"  Grid.Row="1" Margin="0,10,0,10">
-            <Button Name="BtnGetNewInfo" Click="BtnGetNewInfo_OnClick"  Width="120" Margin=" 25, 0, 35, 0" Content="Get new information"/>
-            <Button Name="BtnPutToDb" Click="BtnPutToDb_OnClick" Width="120" Margin=" 0, 0, 35, 0" Content="Put to Data Base"/>
-            <Button Name="BtnCreateXml" Click="BtnCreateXml_OnClick" Width="120" Content="Create XML"/>
-            <Button Name="Login" Click="Login_OnClick" Content="Login" Margin="40,0,0,0" Width="120"></Button>
+            <Button Name="BtnGetNewInfo" Click="BtnGetNewInfo_OnClick"  Width="120" Margin=" 25, 0, 35, 0" Content="Start scraping"/>
+            <Button Name="BtnPutToDb" Click="BtnPutToDb_OnClick" Width="120" Margin=" 0, 0, 35, 0" Content="Save to database"/>
+            <Button Name="BtnCreateXml" Click="BtnCreateXml_OnClick" Width="120" Content="Save to XML"/>
         </StackPanel>
 
-        <ProgressBar Margin="0, 10, 0, 10" Height="20" Grid.Row="2" ></ProgressBar>
+        <ProgressBar Name="PbProgress" Margin="5, 10, 5, 10" Height="20" Maximum="100" Grid.Row="2" ></ProgressBar>
 
-        <DataGrid ColumnWidth="Auto" Grid.Row="3" x:Name="OddsDGV" AutoGenerateColumns="False" ItemsSource="{Binding OddsValuesList}">
+        <DataGrid  Margin="5" ColumnWidth="Auto" Grid.Row="3" x:Name="OddsDGV" AutoGenerateColumns="False" ItemsSource="{Binding OddsValuesList}">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Id}" Header="ID" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Date}" Header="Date" Width="*"></DataGridTextColumn>
