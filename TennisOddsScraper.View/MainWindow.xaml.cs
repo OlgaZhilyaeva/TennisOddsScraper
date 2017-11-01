@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 using TennisOddsScrapper.BL;
 using TennisOddsScrapper.BL.Events;
 using TennisOddsScrapper.BL.Models;
@@ -106,12 +107,23 @@ namespace TennisOddsScraper.View
 
         private void BtnCreateXml_OnClick(object sender, RoutedEventArgs e)
         {
-            Task.Run(() =>
-                SaveDataToXml()
-            );
+            if (_resultList == null || _resultList.Count == 0)
+            {
+                MessageBox.Show("Count of list entries is 0.\nPlease start scraping before export.", "Information",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            if (String.IsNullOrEmpty(TbXmlFileName.Text))
+                TbXmlFileName.Text = SelectXmlFileName();
+
+            var path = TbXmlFileName.Text;
+
+            SaveDataToXml(path);
         }
-        public void SaveDataToXml()
+        public void SaveDataToXml(string path)
         {
+            _serializator.Path = path;
             _serializator.Serialize(_resultList);
             MessageBox.Show("Export to XML complete!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
         }
@@ -154,6 +166,25 @@ namespace TennisOddsScraper.View
 
                 db.SaveChanges();
             }
+        }
+
+        private void BtnBrowser_OnClick(object sender, RoutedEventArgs e)
+        {
+            TbXmlFileName.Text = SelectXmlFileName();
+        }
+
+        private string SelectXmlFileName()
+        {
+            var sfd = new SaveFileDialog();
+            sfd.Title = "Select file to save XML data";
+            sfd.Filter = "XML Files|*.xml";
+
+            if (sfd.ShowDialog() == true)
+            {
+                return sfd.FileName;
+            }
+
+            return null;
         }
     }
 }

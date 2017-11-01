@@ -15,24 +15,30 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal">
-            <Label  Margin="80,10,30,10" >Login</Label>
+            <Label Margin="5">Login</Label>
             <TextBox Width="150" Height="20" Name="login" Text="Statstat1"></TextBox>
-            <Label  Margin="20,10,30,10" >Password</Label>
+            <Label Margin="5">Password</Label>
             <PasswordBox Width="150" Height="20" Name="password" Password="Memorex1" ></PasswordBox>
         </StackPanel>
-        <StackPanel Orientation="Horizontal"  Grid.Row="1" Margin="0,10,0,10">
-            <Button Name="BtnGetNewInfo" Click="BtnGetNewInfo_OnClick"  Width="120" Margin=" 25, 0, 35, 0" Content="Start scraping"/>
-            <Button Name="BtnPutToDb" Click="BtnPutToDb_OnClick" Width="120" Margin=" 0, 0, 35, 0" Content="Save to database"/>
-            <Button Name="BtnCreateXml" Click="BtnCreateXml_OnClick" Width="120" Content="Save to XML"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <TextBlock Margin="5">XML file path</TextBlock>
+            <TextBox Name="TbXmlFileName" Width="250" Margin="5"></TextBox>
+            <Button Margin="5" Width="80" Name="BtnBrowser" Click="BtnBrowser_OnClick">Browse...</Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"  Grid.Row="2">
+            <Button Name="BtnGetNewInfo" Click="BtnGetNewInfo_OnClick"  Width="120" Margin="5" Content="Start scraping"/>
+            <Button Name="BtnPutToDb" Click="BtnPutToDb_OnClick" Width="120" Margin="5" Content="Save to database"/>
+            <Button Name="BtnCreateXml" Click="BtnCreateXml_OnClick" Margin="5" Width="120" Content="Save to XML"/>
         </StackPanel>
 
-        <ProgressBar Name="PbProgress" Margin="5, 10, 5, 10" Height="20" Maximum="100" Grid.Row="2" ></ProgressBar>
+        <ProgressBar Name="PbProgress" Margin="5, 10, 5, 10" Height="20" Maximum="100" Grid.Row="3" ></ProgressBar>
 
-        <DataGrid  Margin="5" ColumnWidth="Auto" Grid.Row="3" x:Name="OddsDGV" AutoGenerateColumns="False" ItemsSource="{Binding OddsValuesList}">
+        <DataGrid  Margin="5" ColumnWidth="Auto" Grid.Row="4" x:Name="OddsDGV" AutoGenerateColumns="False" ItemsSource="{Binding OddsValuesList}">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Id}" Header="ID" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Date}" Header="Date" Width="*"></DataGridTextColumn>
