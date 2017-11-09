@@ -44,14 +44,14 @@
                 <DataGridTextColumn Binding="{Binding Date}" Header="Date" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding HomeTeam}" Header="HomeTeam" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding AwayTeam}" Header="AwayTeam" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="Country" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="Match" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="Av1" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="Av2" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="AvPayout" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="H1" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="H2" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="HPayout" Width="*" ></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Country}" Header="Country" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Match}" Header="Match" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding AverOddsHome}" Header="Av1" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding AverOddsAway}" Header="Av2" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Match}" Header="AvPayout" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Match}" Header="H1" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Match}" Header="H2" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Match}" Header="HPayout" Width="*" ></DataGridTextColumn>
             </DataGrid.Columns>
             <DataGrid.Resources>
                 <col:ArrayList x:Key="OUItemModel">

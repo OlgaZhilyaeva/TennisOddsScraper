@@ -83,6 +83,13 @@ namespace TennisOddsScrapper.BL.XMLSerializator
                 OddSerializationModel tempModel = new OddSerializationModel();
                 foreach (var oddValue in oddsValue)
                 {
+                    tempModel.HomeTeam = oddValue.TeamsLink.HomeTeam;
+                    tempModel.AwayTeam = oddValue.TeamsLink.AwayTeam;
+                    tempModel.Date = oddValue.Date;
+                    tempModel.Id = oddValue.OddValueId;
+                    tempModel.Country = oddValue.DuelLink.MatchLink.CountryLink.Name;
+                    tempModel.Match = oddValue.DuelLink.MatchLink.Name;
+
                     if (oddValue.Tab == "Home/Away")
                     {
                         tempModel.OddsHome = oddValue.Highest1;
