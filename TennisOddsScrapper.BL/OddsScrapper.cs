@@ -118,11 +118,11 @@ namespace TennisOddsScrapper.BL
                 ReportProgress((int) (cI / (double)countriesCount * 100));
                 cI++;
 
-                // TODO: remove from production.
-                if (countryLink.Name != "Canada")
-                {
-                    continue;
-                }
+                //// TODO: remove from production.
+                //if (countryLink.Name != "Canada")
+                //{
+                //    continue;
+                //}
 
                 _driver.Navigate().GoToUrl(countryLink.Url);
                 Delay();
