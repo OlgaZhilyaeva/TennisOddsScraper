@@ -119,7 +119,7 @@ namespace TennisOddsScrapper.BL
                 cI++;
 
                 // TODO: remove from production.
-                if (countryLink.Name != "Canada")
+                if (countryLink.Name != "Uruguay")
                 {
                     continue;
                 }
@@ -451,7 +451,7 @@ namespace TennisOddsScrapper.BL
 
         public void Delay()
         {
-            Thread.Sleep(_random.Next(1500, 1500));
+            Thread.Sleep(_random.Next(200, 800));
         }
     }
 }

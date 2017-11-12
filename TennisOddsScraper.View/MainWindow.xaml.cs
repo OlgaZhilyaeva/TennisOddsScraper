@@ -107,12 +107,8 @@ namespace TennisOddsScraper.View
 
         private void BtnCreateXml_OnClick(object sender, RoutedEventArgs e)
         {
-            if (_resultList == null || _resultList.Count == 0)
-            {
-                MessageBox.Show("Count of list entries is 0.\nPlease start scraping before export.", "Information",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+            if(!CheckDataExistence())
                 return;
-            }
 
             if (String.IsNullOrEmpty(TbXmlFileName.Text))
                 TbXmlFileName.Text = SelectXmlFileName();
@@ -121,6 +117,7 @@ namespace TennisOddsScraper.View
 
             SaveDataToXml(path);
         }
+
         public void SaveDataToXml(string path)
         {
             _serializator.Path = path;
@@ -130,8 +127,22 @@ namespace TennisOddsScraper.View
 
         private void BtnPutToDb_OnClick(object sender, RoutedEventArgs e)
         {
+            if (!CheckDataExistence())
+                return;
+
             PutDataToDb();
             MessageBox.Show("Export to database complete!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private bool CheckDataExistence()
+        {
+            if (_resultList == null || _resultList.Count == 0)
+            {
+                MessageBox.Show("Count of list entries is 0.\nPlease start scraping before export.", "Information",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return false;
+            }
+            return true;
         }
 
         private void PutDataToDb()
