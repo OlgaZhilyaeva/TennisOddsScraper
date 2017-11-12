@@ -10,6 +10,8 @@ namespace TennisOddsScrapper.BL.XMLSerializator
         public string Date { get; set; }
         public string HomeTeam { get; set; }
         public string AwayTeam { get; set; }
+        public string Country { get; set; }
+        public string Match { get; set; }
 
         public string OddsHome { get; set; }
         public string OddsAway { get; set; }

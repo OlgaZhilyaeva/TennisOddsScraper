@@ -38,21 +38,6 @@
 
         <ProgressBar Name="PbProgress" Margin="5, 10, 5, 10" Height="20" Maximum="100" Grid.Row="3" ></ProgressBar>
 
-        <DataGrid  Margin="5" ColumnWidth="Auto" Grid.Row="4" x:Name="OddsDGV" AutoGenerateColumns="False" ItemsSource="{Binding OddsValuesList}">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Id}" Header="ID" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Date}" Header="Date" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding HomeTeam}" Header="HomeTeam" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding AwayTeam}" Header="AwayTeam" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="Country" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="Match" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="Av1" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="Av2" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="AvPayout" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="H1" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="H2" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Header="HPayout" Width="*" ></DataGridTextColumn>
-            </DataGrid.Columns>
             <DataGrid.Resources>
                 <col:ArrayList x:Key="OUItemModel">
                     <local:OUItemModel Country="Country" Cup="Cup" Mutch="Mutch" Handicap="Handicap25" Av1="0.23" Av2="1.23" AvPayout="25" />
