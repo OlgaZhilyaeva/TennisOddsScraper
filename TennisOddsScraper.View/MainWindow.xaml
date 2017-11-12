@@ -38,6 +38,7 @@
 
         <ProgressBar Name="PbProgress" Margin="5, 10, 5, 10" Height="20" Maximum="100" Grid.Row="3" ></ProgressBar>
 
+        <DataGrid  Margin="5" ColumnWidth="Auto" Grid.Row="4" x:Name="OddsDGV" AutoGenerateColumns="true" ItemsSource="{Binding OddsValuesList}">
             <DataGrid.Resources>
                 <col:ArrayList x:Key="OUItemModel">
                     <local:OUItemModel Country="Country" Cup="Cup" Mutch="Mutch" Handicap="Handicap25" Av1="0.23" Av2="1.23" AvPayout="25" />
