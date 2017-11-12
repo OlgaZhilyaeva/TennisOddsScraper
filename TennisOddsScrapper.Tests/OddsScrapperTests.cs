@@ -17,7 +17,7 @@ namespace TennisOddsScrapper.Tests
         public void TestLogIn()
         {
             OddsScrapper bl = new OddsScrapper();
-            bl.LogIn();
+            bl.LogIn("", "");
             Thread.Sleep(5000);
             bl.StartScraping();
         }

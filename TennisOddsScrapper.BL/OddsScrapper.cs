@@ -119,7 +119,7 @@ namespace TennisOddsScrapper.BL
                 cI++;
 
                 // TODO: remove from production.
-                if (countryLink.Name != "Uruguay")
+                if (countryLink.Name != "France")
                 {
                     continue;
                 }
@@ -133,7 +133,7 @@ namespace TennisOddsScrapper.BL
                     _driver.Navigate().GoToUrl(matchLink.Url);
                     Delay();
 
-                    List<DuelLink> duelsList = GetDuelsLinks(matchLink);
+                    List<DuelLink> duelsList = GetDuelsLinks(matchLink).Where(x => !String.IsNullOrEmpty(x.Name)).ToList();
                     List<Teams> teams = new List<Teams>();
                     int group = 0;
                     foreach (var duelLink in duelsList)
@@ -141,31 +141,33 @@ namespace TennisOddsScrapper.BL
                         try
                         {
                             String[] words = duelLink.Name.Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
-                            teams.Add(new Teams()
+                            var team = new Teams()
                             {
                                 HomeTeam = words[1],
                                 AwayTeam = words[0]
-                            });
+                            };
+
+                            teams.Add(team);
 
                             _driver.Navigate().GoToUrl(duelLink.Url);
                             Delay();
 
                             var oddVal = SetOddValuesHa(duelLink, group);
                             if (oddVal != null)
-                                AddOddValue(oddVal);
+                                AddOddValue(oddVal, team);
 
                             if (NaviagateToTab(duelLink, "Asian Handicap"))
                             {
                                 oddVal = SetOddValuesAh(duelLink, group);
                                 if (oddVal != null)
-                                    AddOddValue(oddVal);
+                                    AddOddValue(oddVal, team);
                             }
 
                             if (NaviagateToTab(duelLink, "Over/Under"))
                             {
                                 oddVal = SetOddValuesAh(duelLink, group);
                                 if (oddVal != null)
-                                    AddOddValue(oddVal);
+                                    AddOddValue(oddVal, team);
                             }
                             group++;
                         }
@@ -183,8 +185,9 @@ namespace TennisOddsScrapper.BL
             _driver.Quit();
         }
 
-        private void AddOddValue(OddValue value)
+        private void AddOddValue(OddValue value, Teams teams)
         {
+            value.TeamsLink = teams;
             _oddsValues.Add(value);
         }
 
@@ -303,13 +306,11 @@ namespace TennisOddsScrapper.BL
 
             IList<IWebElement> containers = SafeTryFindElements(_attemptsCount, ".table-container");
             string date = _driver.FindElement(By.CssSelector(".wrap .date")).Text;// get date
-            
 
             int startIndex = date.IndexOf(' ');
             int endIndex = date.LastIndexOf(',');
             int length = endIndex - startIndex;
             date = date.Substring(startIndex, length);
-
 
             if (containers == null)
                 return null;
@@ -321,7 +322,6 @@ namespace TennisOddsScrapper.BL
                 List<IWebElement> countersList = container.FindElements(By.CssSelector(".odds-cnt")).ToList();
                 List<IWebElement> gameValueList = container.FindElements(By.CssSelector("strong")).ToList();
                 List<string> games = new List<string>();
-
 
                 foreach (var game in gameValueList)
                 {
