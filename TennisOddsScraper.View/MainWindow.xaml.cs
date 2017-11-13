@@ -151,7 +151,6 @@ namespace TennisOddsScraper.View
             {
                 List<OddValue> valuesList = _scrapper.OddValues;
 
-                //TODO: teams to db
                 var duelLinks = valuesList.Select(x => x.DuelLink).Distinct();
                 foreach (var duelLink in duelLinks)
                 {

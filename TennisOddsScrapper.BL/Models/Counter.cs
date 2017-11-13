@@ -13,5 +13,7 @@ namespace TennisOddsScrapper.BL.Models
         public int Value { get; set; }
         public IWebElement Link { get; set; }
 
+        public IWebElement ElementContext { get; set; }
+
     }
 }

@@ -54,7 +54,7 @@ namespace TennisOddsScrapper.BL
 
     public class OddsScrapper : IOddsScrapper
     {
-        
+
         private List<OddValue> _oddsValues = new List<OddValue>();
         private IWebDriver _driver;
         private Random _random;
@@ -91,14 +91,14 @@ namespace TennisOddsScrapper.BL
                 document.querySelectorAll(""[name='login-password']"")[0].value = '{pass}';
 
                 document.querySelectorAll(""[name='login-submit']"")[1].click();";
-            
+
             IJavaScriptExecutor executor = (IJavaScriptExecutor)_driver;
             executor.ExecuteScript(js);
         }
 
         private void ReportProgress(int progress)
         {
-            ProgressReportedEvent?.Invoke(this, new ReportEventArgs() {ProgressPercentage = progress});
+            ProgressReportedEvent?.Invoke(this, new ReportEventArgs() { ProgressPercentage = progress });
         }
 
         public void StartScraping()
@@ -115,11 +115,11 @@ namespace TennisOddsScrapper.BL
 
             foreach (var countryLink in countriesLinks)
             {
-                ReportProgress((int) (cI / (double)countriesCount * 100));
+                ReportProgress((int)(cI / (double)countriesCount * 100));
                 cI++;
 
                 // TODO: remove from production.
-                if (countryLink.Name != "France")
+                if (countryLink.Name != "Chile")
                 {
                     continue;
                 }
@@ -143,8 +143,8 @@ namespace TennisOddsScrapper.BL
                             String[] words = duelLink.Name.Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
                             var team = new Teams()
                             {
-                                HomeTeam = words[1],
-                                AwayTeam = words[0]
+                                HomeTeam = words[1].Trim(),
+                                AwayTeam = words[0].Trim()
                             };
 
                             teams.Add(team);
@@ -222,7 +222,6 @@ namespace TennisOddsScrapper.BL
 
         private OddValue SetOddValuesHa(DuelLink duelLink, int group)
         {
-
             IWebElement pathAver = _driver.FindElement(By.CssSelector(".table-main .aver"));
             IWebElement pathHigh = _driver.FindElement(By.CssSelector(".table-main .highest"));
 
@@ -232,12 +231,27 @@ namespace TennisOddsScrapper.BL
                 Group = group,
                 Average1 = pathAver.FindElement(By.CssSelector(".right:nth-child(2)")).Text,
                 Average2 = pathAver.FindElement(By.CssSelector(".right:nth-child(3)")).Text,
-                AveragePayout = pathAver.FindElement(By.CssSelector(".aver .center")).Text,
+                AveragePayout = pathAver.FindElement(By.CssSelector(".aver .center")).Text.Trim(),
                 Highest1 = pathHigh.FindElement(By.CssSelector(".right:nth-child(2)")).Text,
                 Highest2 = pathHigh.FindElement(By.CssSelector(".right:nth-child(3)")).Text,
                 HighestPayout = pathHigh.FindElement(By.CssSelector(".center")).Text,
-                Tab = _driver.FindElement(By.CssSelector(".first strong")).Text
+                Tab = _driver.FindElement(By.CssSelector(".first strong")).Text,
+                Date = GetDate()
             };
+        }
+
+        private string GetDate()
+        {
+            string date = _driver.FindElement(By.CssSelector(".wrap .date")).Text;// get date
+
+            string[] dataArray = date.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (dataArray.Length == 3)
+            {
+                date = dataArray[1].Trim();
+            }
+
+            return date;
         }
 
         private bool NaviagateToTab(DuelLink duelLink, string tabName)
@@ -304,36 +318,30 @@ namespace TennisOddsScrapper.BL
             List<Counter> counters = new List<Counter>();
             string gameValue = "";
 
-            IList<IWebElement> containers = SafeTryFindElements(_attemptsCount, ".table-container");
-            string date = _driver.FindElement(By.CssSelector(".wrap .date")).Text;// get date
+            IList<IWebElement> containers = SafeTryFindElements(_attemptsCount, ".table-container").Where(x => !x.GetCssValue("display").Equals("none")).ToList();
 
-            int startIndex = date.IndexOf(' ');
-            int endIndex = date.LastIndexOf(',');
-            int length = endIndex - startIndex;
-            date = date.Substring(startIndex, length);
-
-            if (containers == null)
+            if (!containers.Any())
                 return null;
 
             foreach (var container in containers)
             {
                 //Delay();
                 List<IWebElement> linksList = container.FindElements(By.CssSelector(".odds-co a")).ToList();
-                List<IWebElement> countersList = container.FindElements(By.CssSelector(".odds-cnt")).ToList();
-                List<IWebElement> gameValueList = container.FindElements(By.CssSelector("strong")).ToList();
+                List<string> countersList = container.FindElements(By.CssSelector(".odds-cnt")).Select(x => x.Text).ToList();
+                List<string> gameValueList = container.FindElements(By.CssSelector("strong")).Select(x => x.Text).ToList();
                 List<string> games = new List<string>();
 
                 foreach (var game in gameValueList)
                 {
 
-                    if (game.Text.Contains("Asian handicap "))
+                    if (game.Contains("Asian handicap "))
                     {
-                        games.Add(game.Text.Replace("Asian handicap ", ""));
+                        games.Add(game.Replace("Asian handicap ", ""));
                     }
 
-                    if (game.Text.Contains("Over/Under "))
+                    if (game.Contains("Over/Under "))
                     {
-                        games.Add(game.Text.Replace("Over/Under ", ""));
+                        games.Add(game.Replace("Over/Under ", ""));
                     }
 
                 }
@@ -341,13 +349,12 @@ namespace TennisOddsScrapper.BL
                 {
                     IWebElement link = linksList.FirstOrDefault(); // SafeTryFindElements(_attemptsCount, ".odds-co a").FirstOrDefault();
 
-                    IWebElement counterElement = countersList.FirstOrDefault(); //SafeTryFindElements(_attemptsCount, ".odds-cnt").FirstOrDefault();
+                    string counterElement = countersList.FirstOrDefault(); //SafeTryFindElements(_attemptsCount, ".odds-cnt").FirstOrDefault();
 
                     gameValue = games.FirstOrDefault();
 
-                    string counterString = counterElement.Text.Replace("(", "")
+                    string counterString = counterElement.Replace("(", "")
                         .Replace(")", "");
-                   
 
                     int counter = 0;
                     if (Int32.TryParse(counterString, out counter))
@@ -355,7 +362,8 @@ namespace TennisOddsScrapper.BL
                         counters.Add(new Counter
                         {
                             Value = counter,
-                            Link = link
+                            Link = link,
+                            ElementContext = container
                         });
                     }
                 }
@@ -366,55 +374,9 @@ namespace TennisOddsScrapper.BL
 
             bool actionsSucceeded = true;
 
-            foreach (var maxCounter in maxCounters)
-            {
-                actionsSucceeded = DoSafeAction(_attemptsCount, () =>
-                {
-                    if (maxCounter.Link.Text.ToLower().Contains("compare"))
-                    {
-                        Delay();
-                        maxCounter.Link.Click();
-                    }
-                }, () =>
-                {
-                    return _driver.FindElements(By.CssSelector(".table-main .aver")).Count > 0 &&
-                           _driver.FindElements(By.CssSelector(".table-main .highest")).Count > 0 &&
-                           _driver.FindElements(By.CssSelector(".table-header-light strong")).Count > 0;
-                           ;
-                });
-            }
+            CloseAllTableContainers();
 
-            if (actionsSucceeded == false)
-            {
-                return null;
-            }
-
-            List<IWebElement> pathHigh = _driver.FindElements(By.CssSelector(".table-main .highest")).ToList();
-            List<IWebElement> pathAver = _driver.FindElements(By.CssSelector(".table-main .aver")).ToList();
-
-            FindHigh finalElement = null;
-
-            if (maxCounters.Count == pathHigh.Count && maxCounters.Count == pathAver.Count)
-            {
-                int z = 0;
-                List<FindHigh> findHighs = new List<FindHigh>(); 
-                foreach (var high in pathHigh)
-                {
-                    List<IWebElement> arrayHighs = high.FindElements(By.ClassName("no-border-right-highest")).ToList();
-
-                    if (arrayHighs.Count == 1)
-                    {
-                        string arrayHighsString = arrayHighs.FirstOrDefault().Text.Replace("%", "");
-                        double counter = 0;
-                        if (Double.TryParse(arrayHighsString, out counter))
-                        {
-                            findHighs.Add(new FindHigh(){HighInt = counter,  HighString = high, AverageString = pathAver[z], GameValue = gameValue});
-                        }
-                    }
-                    z++;
-                }
-                finalElement = findHighs.OrderByDescending(x => x.HighInt).FirstOrDefault();
-            }
+            FindHigh finalElement = FindFinalElement(maxCounters, gameValue);
 
             if (finalElement != null)
             {
@@ -429,12 +391,61 @@ namespace TennisOddsScrapper.BL
                     Highest1 = finalElement.HighString.FindElement(By.CssSelector(".right:nth-child(3)")).Text,
                     Highest2 = finalElement.HighString.FindElement(By.CssSelector(".right:nth-child(4)")).Text,
                     HighestPayout = finalElement.HighString.FindElement(By.CssSelector(".center")).Text,
-                    Tab = _driver.FindElement(By.CssSelector(".ul-nav>.active")).Text,
-                    Date = date
+                    Tab = _driver.FindElement(By.CssSelector(".ul-nav>.active")).Text
                 };
                 return value;
             }
             return null;
+        }
+
+        private FindHigh FindFinalElement(List<Counter> maxCounters, string gameValue)
+        {
+            List<FindHigh> highestValues = new List<FindHigh>();
+
+            foreach (var maxCounter in maxCounters)
+            {
+                if (maxCounter.Link.Text.ToLower().Contains("compare"))
+                {
+                    Delay();
+                    maxCounter.Link.Click();
+                }
+
+                List<IWebElement> avgElements = maxCounter.ElementContext.FindElements(By.CssSelector(".table-main .aver")).ToList();
+                List<IWebElement> highestElements = maxCounter.ElementContext.FindElements(By.CssSelector(".table-main .highest")).ToList();
+
+                if (!avgElements.Any() || avgElements.Count != 1 || highestElements.Count != 1 || avgElements.Count != highestElements.Count)
+                    throw new InvalidOperationException("Unable to find avg and highest data.");
+
+
+                var highestElement = highestElements.FirstOrDefault();
+
+                var elems = highestElement.FindElements(By.ClassName("no-border-right-highest")).ToList();
+                var arrayHighs = elems.FirstOrDefault()?.Text.Replace("%", "");
+
+                double counter = 0;
+                if (String.IsNullOrWhiteSpace(arrayHighs) || !Double.TryParse(arrayHighs, out counter))
+                    throw new NullReferenceException("Unable to get % payout value of highest bid.");
+
+                highestValues.Add(new FindHigh()
+                {
+                    AverageString = avgElements.FirstOrDefault(),
+                    GameValue = gameValue,
+                    HighInt = counter,
+                    HighString = highestElements.FirstOrDefault()
+                });
+            }
+
+            return highestValues.OrderByDescending(x => x.HighInt).FirstOrDefault();
+        }
+
+        private void CloseAllTableContainers()
+        {
+            var elements = _driver.FindElements(By.PartialLinkText("Hide odds"));
+
+            foreach (var webElement in elements)
+            {
+                webElement.Click();
+            }
         }
 
         private bool DoSafeAction(int attemptsCount, Action targetAction, Func<bool> successCriteria)

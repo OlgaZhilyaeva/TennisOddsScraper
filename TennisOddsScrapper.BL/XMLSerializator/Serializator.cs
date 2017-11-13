@@ -85,7 +85,8 @@ namespace TennisOddsScrapper.BL.XMLSerializator
                 {
                     tempModel.HomeTeam = oddValue.TeamsLink.HomeTeam;
                     tempModel.AwayTeam = oddValue.TeamsLink.AwayTeam;
-                    tempModel.Date = oddValue.Date;
+                    if (String.IsNullOrWhiteSpace(oddValue.Date) == false)
+                        tempModel.Date = oddValue.Date;
                     tempModel.Id = oddValue.OddValueId;
                     tempModel.Country = oddValue.DuelLink.MatchLink.CountryLink.Name;
                     tempModel.Match = oddValue.DuelLink.MatchLink.Name;
