@@ -11,7 +11,7 @@ namespace TennisOddsScrapper.BL
     public class OddsDbContext: DbContext
     {
         public OddsDbContext() 
-            :base("oddsstorage")
+            :base("OddsData")
         { }
 
         public DbSet<CountryLink> CountryLinks { get; set; }
