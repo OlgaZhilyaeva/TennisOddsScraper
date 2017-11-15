@@ -127,12 +127,11 @@ namespace TennisOddsScraper.View
 
         private void BtnPutToDb_OnClick(object sender, RoutedEventArgs e)
         {
-            PutDataToDb();
 
             if (!CheckDataExistence())
                 return;
 
-            // PutDataToDb();
+            PutDataToDb();
             MessageBox.Show("Export to database complete!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
@@ -151,27 +150,6 @@ namespace TennisOddsScraper.View
         {
             using (OddsDbContext db = new OddsDbContext())
             {
-
-                db.CountryLinks.AddRange(new CountryLink[]
-                {
-                    new CountryLink()
-                    {
-                        Url = "someone@example.com",
-                        Name = "Country",
-                        MatchLinks = new List<MatchLink>()
-                    },
-                    new CountryLink()
-                    {
-                        Url = "someone2@example.com",
-                        Name = "Ukraine",
-                        MatchLinks = new List<MatchLink>()
-                    },
-                });
-
-                db.SaveChanges();
-
-                return;
-
 
                 List<OddValue> valuesList = _scrapper.OddValues;
 
