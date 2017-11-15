@@ -113,16 +113,18 @@ namespace TennisOddsScrapper.BL
             var countriesCount = countriesLinks.Count;
             var cI = 0;
 
+            int group = 0;
+
             foreach (var countryLink in countriesLinks)
             {
                 ReportProgress((int)(cI / (double)countriesCount * 100));
                 cI++;
 
                 // TODO: remove from production.
-                if (countryLink.Name != "Chile")
-                {
-                    continue;
-                }
+                //if (countryLink.Name != "Chile")
+                //{
+                //    continue;
+                //}
 
                 _driver.Navigate().GoToUrl(countryLink.Url);
                 Delay();
@@ -135,7 +137,7 @@ namespace TennisOddsScrapper.BL
 
                     List<DuelLink> duelsList = GetDuelsLinks(matchLink).Where(x => !String.IsNullOrEmpty(x.Name)).ToList();
                     List<Teams> teams = new List<Teams>();
-                    int group = 0;
+
                     foreach (var duelLink in duelsList)
                     {
                         try
@@ -462,7 +464,7 @@ namespace TennisOddsScrapper.BL
 
         public void Delay()
         {
-            Thread.Sleep(_random.Next(200, 800));
+            Thread.Sleep(_random.Next(100, 600));
         }
     }
 }
